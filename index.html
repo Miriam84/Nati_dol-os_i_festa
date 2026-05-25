@@ -510,22 +510,29 @@
 
     .instagram-feed {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
     }
 
     .instagram-card {
       position: relative;
-      min-height: 280px;
+      min-height: 560px;
       border-radius: 26px;
       overflow: hidden;
       box-shadow: var(--shadow);
       background: #f5e7de;
     }
 
+    .instagram-card iframe,
     .instagram-card img {
       width: 100%;
       height: 100%;
+      display: block;
+      border: 0;
+      background: white;
+    }
+
+    .instagram-card img {
       object-fit: cover;
     }
 
@@ -851,13 +858,45 @@
       .hero, .banner, .form-wrap, .checkout-shortcuts, .contact-grid { grid-template-columns: 1fr; }
       .services, .products, .instagram-feed { grid-template-columns: repeat(2, 1fr); }
       .hero-card { min-height: 420px; }
+      .hero { gap: 30px; }
+      .form-wrap, .contact-grid { gap: 26px; }
       .nav-links { display: none; }
     }
 
     @media (max-width: 640px) {
       .trust, .services, .products, .steps, .faq, .instagram-feed { grid-template-columns: 1fr; }
       form { grid-template-columns: 1fr; }
-      .hero { padding-top: 42px; }
+      section { padding: 56px 5vw; }
+      .topbar { padding: 10px 14px; font-size: 13px; }
+      .nav { padding: 14px 5vw; }
+      .logo { font-size: 18px; }
+      h1 { font-size: clamp(34px, 12vw, 52px); line-height: 1; }
+      .hero { padding-top: 42px; gap: 24px; }
+      .hero p { font-size: 17px; margin-bottom: 22px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .hero-actions .btn { width: 100%; }
+      .trust { grid-template-columns: 1fr; }
+      .hero-card { min-height: auto; padding: 18px; border-radius: 30px; }
+      .photo-grid { grid-template-columns: 1fr; grid-template-rows: repeat(3, minmax(160px, auto)); }
+      .photo-tile,
+      .photo-tile.large { min-height: 180px; grid-row: span 1; }
+      .photo-tile { padding: 16px; border-radius: 22px; }
+      .photo-tile::before { inset: 10px; border-radius: 18px; }
+      .floating-note { position: static; right: auto; bottom: auto; margin-top: 14px; max-width: none; }
+      .section-head { margin-bottom: 24px; }
+      .section-head p { font-size: 16px; }
+      .product-meta { flex-direction: column; align-items: stretch; }
+      .product-meta .btn { width: 100%; }
+      .gallery { grid-auto-columns: minmax(220px, 82vw); }
+      .instagram-card { min-height: 480px; }
+      .selected-product-card { grid-template-columns: 88px 1fr; padding: 16px; }
+      .selected-product-card img { width: 88px; height: 88px; }
+      .checkout-card,
+      .checkout-highlight,
+      .contact-card,
+      .map-card,
+      .form-card { padding: 20px; }
+      .map-card iframe { min-height: 300px; }
       .banner { padding: 30px; }
       .whatsapp { left: 16px; right: 16px; justify-content: center; text-align: center; }
       footer { grid-template-columns: 1fr; padding-bottom: 148px; }
@@ -1028,8 +1067,8 @@
 
     <section id="xarxes">
       <div class="section-head">
-        <h2>Segueix-nos a Instagram i Facebook</h2>
-        <p>Descobreix més idees, novetats i treballs reals a les nostres xarxes socials.</p>
+        <h2>Instagram real de Nati</h2>
+        <p>Una selecció de publicacions reals perquè pugues veure l’estil, els detalls i les idees més recents.</p>
       </div>
       <div class="social-strip">
         <a class="social-pill" href="https://www.instagram.com/nati_dolcos_i_festa/" target="_blank" rel="noopener">Instagram · @nati_dolcos_i_festa</a>
@@ -1472,15 +1511,37 @@
       document.head.appendChild(gaScript);
     }
 
-    function buildInstagramFeed(products) {
+    const featuredInstagramPosts = [
+      "https://www.instagram.com/p/DXdvC7jjVbJ/embed/captioned/",
+      "https://www.instagram.com/p/DXM3TZdjQEJ/embed/captioned/",
+      "https://www.instagram.com/p/DWZp6daDb2-/embed/captioned/",
+      "https://www.instagram.com/p/DK7I-TeNmLj/embed/captioned/"
+    ];
+
+    function buildInstagramFeed(posts, products) {
       if (!instagramFeed) return;
 
-      const feedImages = products
+      if (featuredInstagramPosts.length > 0) {
+        instagramFeed.innerHTML = featuredInstagramPosts.map((embedUrl, index) => `
+          <article class="instagram-card">
+            <iframe
+              src="${escapeHtml(embedUrl)}"
+              loading="lazy"
+              allowtransparency="true"
+              allowfullscreen="true"
+              scrolling="no"
+              title="${escapeHtml(`Publicació d'Instagram ${index + 1} de Nati Dolcos i Festa`)}"></iframe>
+          </article>
+        `).join("");
+        return;
+      }
+
+      const feedImages = (products || [])
         .flatMap((product) => (product.imatges || []).slice(0, 2).map((image) => ({
           image,
           product
         })))
-        .slice(0, 8);
+        .slice(0, 6);
 
       instagramFeed.innerHTML = feedImages.map(({ image, product }) => `
         <a class="instagram-card" href="https://www.instagram.com/nati_dolcos_i_festa/" target="_blank" rel="noopener" aria-label="Veure més contingut d'Instagram de ${escapeHtml(product.nom || "Nati Dolcos i Festa")}">
@@ -1614,7 +1675,7 @@
       if (Array.isArray(config.products) && config.products.length > 0) {
         availableProducts = config.products;
         applyHeroImages(config.products);
-        buildInstagramFeed(config.products);
+        buildInstagramFeed(config.instagramPosts, config.products);
         const productOptions = config.products.map((product) => `
           <option value="${escapeHtml(product.id)}">${escapeHtml(product.nom || "Servei")}</option>
         `).join("");

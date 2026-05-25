@@ -34,7 +34,8 @@ function loadEnvFile() {
 
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, {
-    "Content-Type": "application/json; charset=utf-8"
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store, max-age=0"
   });
   response.end(JSON.stringify(payload));
 }
@@ -134,6 +135,10 @@ function readFallbackProducts() {
   }
 }
 
+function getInstagramUsername() {
+  return process.env.INSTAGRAM_USERNAME || "nati_dolcos_i_festa";
+}
+
 function buildAirtableFields(payload) {
   const fields = {
     "Nom del client": payload.nom || "",
@@ -149,10 +154,18 @@ function buildAirtableFields(payload) {
   if (payload.lloc) fields.Lloc = payload.lloc;
   if (payload.tema_colors) fields["Tema o colors"] = payload.tema_colors;
 
+  const extraDetails = [
+    payload.pressupost ? `Pressupost aproximat: ${payload.pressupost}` : "",
+    payload.quantitat ? `Quantitat: ${payload.quantitat}` : "",
+    payload.notes ? `Notes de la comanda: ${payload.notes}` : "",
+    payload.checkoutSessionId ? `Stripe session: ${payload.checkoutSessionId}` : "",
+    payload.paymentStatus ? `Estat del pagament: ${payload.paymentStatus}` : ""
+  ].filter(Boolean);
+
   const message = [
     payload.missatge || "",
-    payload.pressupost ? `Pressupost orientatiu: ${payload.pressupost}` : ""
-  ].filter(Boolean).join("\n");
+    extraDetails.length > 0 ? extraDetails.join("\n") : ""
+  ].filter(Boolean).join("\n\n");
 
   if (message) fields.Missatge = message;
 
@@ -285,6 +298,76 @@ async function fetchProductById(productId) {
   return products.find((product) => product.id === productId || product.slug === productId) || null;
 }
 
+function buildInstagramFallbackPosts(products = []) {
+  return products
+    .flatMap((product) => (product.imatges || []).slice(0, 1).map((image, index) => ({
+      id: `${product.id}-${index}`,
+      shortcode: "",
+      permalink: `https://www.instagram.com/${getInstagramUsername()}/`,
+      embedUrl: "",
+      caption: product.nom || "Nati Dolcos i Festa",
+      mediaType: "fallback",
+      thumbnailUrl: image.url || "",
+      timestamp: ""
+    })))
+    .slice(0, 6);
+}
+
+function normaliseInstagramNode(node) {
+  if (!node?.shortcode) return null;
+
+  const isReel = node.product_type === "clips" || node.__typename === "XDTGraphVideo";
+  const postPath = isReel ? "reel" : "p";
+  const permalink = `https://www.instagram.com/${postPath}/${node.shortcode}/`;
+
+  return {
+    id: node.id || node.shortcode,
+    shortcode: node.shortcode,
+    permalink,
+    embedUrl: `${permalink}embed/captioned/`,
+    caption: node.edge_media_to_caption?.edges?.[0]?.node?.text || "",
+    mediaType: isReel ? "reel" : "post",
+    thumbnailUrl: node.thumbnail_src || node.display_url || "",
+    timestamp: node.taken_at_timestamp || ""
+  };
+}
+
+async function fetchInstagramPosts(products = []) {
+  const fallbackPosts = buildInstagramFallbackPosts(products);
+  const username = getInstagramUsername();
+
+  try {
+    const response = await fetch(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(username)}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+        "X-IG-App-ID": "936619743392459",
+        Accept: "application/json"
+      }
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      const edges =
+        result?.data?.user?.edge_owner_to_timeline_media?.edges ||
+        result?.user?.edge_owner_to_timeline_media?.edges ||
+        [];
+
+      const posts = edges
+        .map((edge) => normaliseInstagramNode(edge?.node))
+        .filter(Boolean)
+        .slice(0, 6);
+
+      if (posts.length > 0) {
+        return posts;
+      }
+    }
+  } catch {
+    // Ignore and fall back to the local visual feed.
+  }
+
+  return fallbackPosts;
+}
+
 function buildSiteUrl(requestUrl) {
   if (process.env.SITE_URL) {
     return process.env.SITE_URL.replace(/\/$/, "");
@@ -382,16 +465,21 @@ const server = http.createServer(async (request, response) => {
   if (request.method === "GET" && requestUrl.pathname === "/api/config") {
     try {
       const products = await fetchProductsFromAirtable();
+      const instagramPosts = await fetchInstagramPosts(products);
       sendJson(response, 200, {
         whatsappNumber: process.env.WHATSAPP_NUMBER || "",
         contactSummary: process.env.CONTACT_SUMMARY || "",
         gaMeasurementId: process.env.GA_MEASUREMENT_ID || "",
         googleSiteVerification: process.env.GOOGLE_SITE_VERIFICATION || "",
+        instagramUsername: getInstagramUsername(),
+        instagramPosts,
         checkoutEnabled: isStripeConfigured(),
         products
       });
     } catch (error) {
       sendJson(response, 200, {
+        instagramUsername: getInstagramUsername(),
+        instagramPosts: [],
         whatsappNumber: process.env.WHATSAPP_NUMBER || "",
         contactSummary: process.env.CONTACT_SUMMARY || "",
         gaMeasurementId: process.env.GA_MEASUREMENT_ID || "",
