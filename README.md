@@ -44,6 +44,22 @@ npm start
 - abans de pujar el repo, revisa que no hi haja cap credencial real en fitxers de mostra
 - `assets/products/` es pot versionar si vols mantindre les imatges locals al repo
 
+## Vercel
+
+Per a desplegar a Vercel:
+
+- el projecte ja inclou `vercel.json`
+- si no configures Airtable a Vercel, la web mostrara un cataleg local de fallback amb imatges
+- si vols dades reals des d'Airtable, afig a Vercel aquestes variables:
+  - `AIRTABLE_TOKEN`
+  - `AIRTABLE_BASE_ID`
+  - `AIRTABLE_LEADS_TABLE_ID`
+  - `AIRTABLE_PRODUCTS_TABLE_ID`
+  - `WHATSAPP_NUMBER`
+  - `CONTACT_SUMMARY`
+  - `STRIPE_SECRET_KEY` si vols pagament directe
+  - `SITE_URL` amb el domini public
+
 ## Activar pagament directe
 
 Per activar el checkout real amb Stripe:

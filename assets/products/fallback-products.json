@@ -1,0 +1,107 @@
+[
+  {
+    "id": "recK5Aq35PfkGFmcZ",
+    "nom": "Taula dolça / candy bar",
+    "slug": "taula-dolca-candy-bar",
+    "categoria": "Esdeveniments",
+    "descripcioCurta": "Taula dolça personalitzada per a comunions, bodes, bateigs, aniversaris, baby showers i celebracions especials. Inclou proposta visual, dolços i muntatge segons necessitat.",
+    "preuOrientatiu": 200,
+    "opcions": "Opcions segons nombre de persones, temàtica, colors, tipus de dolços, muntatge simple o complet.",
+    "notes": "Servei clau per a celebracions especials.",
+    "imatges": [
+      { "url": "/assets/products/taula-dolca-candy-bar-01.webp", "fullUrl": "/assets/products/taula-dolca-candy-bar-01.webp", "alt": "Taula dolça personalitzada", "index": 0 },
+      { "url": "/assets/products/taula-dolca-candy-bar-02.webp", "fullUrl": "/assets/products/taula-dolca-candy-bar-02.webp", "alt": "Decoració i taula dolça", "index": 1 },
+      { "url": "/assets/products/taula-dolca-candy-bar-03.jpg", "fullUrl": "/assets/products/taula-dolca-candy-bar-03.jpg", "alt": "Detalls de comunió", "index": 2 },
+      { "url": "/assets/products/taula-dolca-candy-bar-04.jpg", "fullUrl": "/assets/products/taula-dolca-candy-bar-04.jpg", "alt": "Taula dolça per a celebració", "index": 3 }
+    ]
+  },
+  {
+    "id": "recEd46zfJVan7wLl",
+    "nom": "Pastís de xuxes personalitzat",
+    "slug": "pastis-de-xuxes-personalitzat",
+    "categoria": "Xuxes personalitzades",
+    "descripcioCurta": "Pastís fet amb llaminadures, personalitzat segons edat, colors, temàtica o nom de la persona. Ideal per a aniversaris i regals originals.",
+    "preuOrientatiu": 45,
+    "opcions": "Opcions per edat, nom, colors, temàtica, mida petita, mitjana o gran.",
+    "notes": "Perfecte per a aniversaris i celebracions dolces.",
+    "imatges": [
+      { "url": "/assets/products/pastis-de-xuxes-personalitzat-01.jpg", "fullUrl": "/assets/products/pastis-de-xuxes-personalitzat-01.jpg", "alt": "Pastís de xuxes personalitzat", "index": 0 },
+      { "url": "/assets/products/pastis-de-xuxes-personalitzat-02.jpg", "fullUrl": "/assets/products/pastis-de-xuxes-personalitzat-02.jpg", "alt": "Pastís de xuxes per a aniversari", "index": 1 },
+      { "url": "/assets/products/pastis-de-xuxes-personalitzat-03.jpg", "fullUrl": "/assets/products/pastis-de-xuxes-personalitzat-03.jpg", "alt": "Detall dolç personalitzat", "index": 2 },
+      { "url": "/assets/products/pastis-de-xuxes-personalitzat-04.jpg", "fullUrl": "/assets/products/pastis-de-xuxes-personalitzat-04.jpg", "alt": "Pastís de llaminadures", "index": 3 }
+    ]
+  },
+  {
+    "id": "recOM5B9UfoDEKqqV",
+    "nom": "Ram de xuxes",
+    "slug": "ram-de-xuxes",
+    "categoria": "Regals originals",
+    "descripcioCurta": "Ram elaborat amb llaminadures, pensat com a regal original per a aniversaris, celebracions, agraïments o detalls especials.",
+    "preuOrientatiu": 25,
+    "opcions": "Petit, mitjà o gran. Es pot adaptar per a aniversari, detall, agraïment o celebració.",
+    "notes": "Regal dolç i visual per sorprendre.",
+    "imatges": [
+      { "url": "/assets/products/ram-de-xuxes-01.jpg", "fullUrl": "/assets/products/ram-de-xuxes-01.jpg", "alt": "Ram de xuxes", "index": 0 }
+    ]
+  },
+  {
+    "id": "recxk93OIROnopKIa",
+    "nom": "Regals originals i detalls",
+    "slug": "regals-originals-i-detalls",
+    "categoria": "Regals i detalls",
+    "descripcioCurta": "Detalls personalitzats per a convidats, celebracions, comunions, bodes, bateigs i festes especials.",
+    "preuOrientatiu": 35,
+    "opcions": "Detalls per unitats, packs per convidats, comunions, bodes, bateigs i celebracions.",
+    "notes": "Ideal per a records bonics i personalitzats.",
+    "imatges": [
+      { "url": "/assets/products/regals-originals-i-detalls-01.webp", "fullUrl": "/assets/products/regals-originals-i-detalls-01.webp", "alt": "Regals originals", "index": 0 },
+      { "url": "/assets/products/regals-originals-i-detalls-02.jpg", "fullUrl": "/assets/products/regals-originals-i-detalls-02.jpg", "alt": "Detalls per a celebracions", "index": 1 },
+      { "url": "/assets/products/regals-originals-i-detalls-03.jpg", "fullUrl": "/assets/products/regals-originals-i-detalls-03.jpg", "alt": "Regals i detalls personalitzats", "index": 2 }
+    ]
+  },
+  {
+    "id": "rec3ZaJ7L35NV7fmm",
+    "nom": "Globus d'Hèli personalitzats",
+    "slug": "globus-d-heli-personalitzats",
+    "categoria": "Decoració",
+    "descripcioCurta": "Decoració d'espais amb globus per a aniversaris, 18 anys, festa dels 15, comunions, bodes, baby showers i photocalls.",
+    "preuOrientatiu": 15,
+    "opcions": "Des d'un sol globus fins a una decoració completa amb arc, garlanda, columna o photocall.",
+    "notes": "Decoració visual per a moments molt especials.",
+    "imatges": [
+      { "url": "/assets/products/globus-d-heli-personalitzats-01.jpg", "fullUrl": "/assets/products/globus-d-heli-personalitzats-01.jpg", "alt": "Decoració amb globus", "index": 0 },
+      { "url": "/assets/products/globus-d-heli-personalitzats-02.jpg", "fullUrl": "/assets/products/globus-d-heli-personalitzats-02.jpg", "alt": "Globus personalitzats", "index": 1 },
+      { "url": "/assets/products/globus-d-heli-personalitzats-03.webp", "fullUrl": "/assets/products/globus-d-heli-personalitzats-03.webp", "alt": "Photocall amb globus", "index": 2 }
+    ]
+  },
+  {
+    "id": "recgcXdH4vLIY0TEU",
+    "nom": "Decoració de taules - detalls",
+    "slug": "decoracio-de-taules-detalls",
+    "categoria": "Decoració",
+    "descripcioCurta": "Ambientació i decoració de sales, locals i espais per a celebracions familiars i esdeveniments especials.",
+    "preuOrientatiu": 20,
+    "opcions": "Decoració de sala, taula principal, photocall, racons temàtics i muntatge personalitzat.",
+    "notes": "Ideal per vestir espais amb gust i detall.",
+    "imatges": [
+      { "url": "/assets/products/decoracio-de-taules-detalls-01.jpg", "fullUrl": "/assets/products/decoracio-de-taules-detalls-01.jpg", "alt": "Decoració de taules", "index": 0 },
+      { "url": "/assets/products/decoracio-de-taules-detalls-02.jpg", "fullUrl": "/assets/products/decoracio-de-taules-detalls-02.jpg", "alt": "Detalls de decoració", "index": 1 },
+      { "url": "/assets/products/decoracio-de-taules-detalls-03.jpg", "fullUrl": "/assets/products/decoracio-de-taules-detalls-03.jpg", "alt": "Decoració per a celebracions", "index": 2 }
+    ]
+  },
+  {
+    "id": "recsBp14msUjYcWMb",
+    "nom": "Sorpreses amb bitllets",
+    "slug": "sorpreses-amb-bitllets",
+    "categoria": "Regals originals",
+    "descripcioCurta": "Elaboracions amb globus, detalls i presentacions originals que incorporen bitllets per a regals especials.",
+    "preuOrientatiu": 35,
+    "opcions": "Dissenys originals amb bitllets reals i presentació cuidada.",
+    "notes": "Una sorpresa diferent per regalar d'una manera divertida.",
+    "imatges": [
+      { "url": "/assets/products/sorpreses-amb-bitllets-01.webp", "fullUrl": "/assets/products/sorpreses-amb-bitllets-01.webp", "alt": "Sorpresa amb bitllets", "index": 0 },
+      { "url": "/assets/products/sorpreses-amb-bitllets-02.webp", "fullUrl": "/assets/products/sorpreses-amb-bitllets-02.webp", "alt": "Regal amb bitllets", "index": 1 },
+      { "url": "/assets/products/sorpreses-amb-bitllets-03.jpg", "fullUrl": "/assets/products/sorpreses-amb-bitllets-03.jpg", "alt": "Detall original amb bitllets", "index": 2 }
+    ]
+  }
+]

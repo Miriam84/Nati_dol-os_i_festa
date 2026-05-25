@@ -8,6 +8,7 @@ const INDEX_PATH = path.join(ROOT, "index.html");
 const ENV_PATH = path.join(ROOT, ".env");
 const ASSETS_ROOT = path.join(ROOT, "assets");
 const PRODUCT_ASSETS_MANIFEST = path.join(ASSETS_ROOT, "products", "manifest.json");
+const FALLBACK_PRODUCTS_PATH = path.join(ROOT, "assets", "products", "fallback-products.json");
 
 loadEnvFile();
 
@@ -123,6 +124,16 @@ function readProductAssetsManifest() {
   }
 }
 
+function readFallbackProducts() {
+  if (!fs.existsSync(FALLBACK_PRODUCTS_PATH)) return [];
+
+  try {
+    return JSON.parse(fs.readFileSync(FALLBACK_PRODUCTS_PATH, "utf8"));
+  } catch {
+    return [];
+  }
+}
+
 function buildAirtableFields(payload) {
   const fields = {
     "Nom del client": payload.nom || "",
@@ -196,7 +207,7 @@ async function createLeadInAirtable(payload) {
 }
 
 async function fetchProductsFromAirtable() {
-  if (!isConfigured()) return [];
+  if (!isConfigured()) return readFallbackProducts();
 
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableId = process.env.AIRTABLE_PRODUCTS_TABLE_ID;
@@ -227,6 +238,8 @@ async function fetchProductsFromAirtable() {
 
   const result = await response.json();
   if (!response.ok) {
+    const fallbackProducts = readFallbackProducts();
+    if (fallbackProducts.length > 0) return fallbackProducts;
     throw new Error(result?.error?.message || "No s'han pogut llegir els productes d'Airtable.");
   }
 
@@ -529,6 +542,10 @@ const server = http.createServer(async (request, response) => {
   sendJson(response, 404, { error: "Ruta no trobada." });
 });
 
-server.listen(PORT, () => {
-  console.log(`Nati web disponible a http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log(`Nati web disponible a http://localhost:${PORT}`);
+  });
+}
+
+module.exports = server;
