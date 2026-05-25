@@ -1,0 +1,10 @@
+{
+  "name": "nati-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing funcional de Nati connectada a Airtable",
+  "scripts": {
+    "start": "node server.js",
+    "sync:assets": "node scripts/sync-airtable-assets.js"
+  }
+}
