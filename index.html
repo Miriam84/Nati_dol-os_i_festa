@@ -63,6 +63,32 @@
       line-height: 1.5;
     }
 
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes softFloat {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
 
@@ -225,6 +251,7 @@
       box-shadow: var(--shadow);
       padding: 28px;
       overflow: hidden;
+      animation: fadeUp .8s ease both;
     }
 
     .photo-grid {
@@ -273,6 +300,7 @@
       border-radius: 22px;
       max-width: 250px;
       box-shadow: 0 14px 35px rgba(75,47,47,0.24);
+      animation: softFloat 5s ease-in-out infinite;
     }
 
     section { padding: 72px 6vw; }
@@ -459,6 +487,14 @@
 
     .gallery-shell {
       position: relative;
+      border-radius: 34px;
+      padding: 20px;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(247,168,184,.24), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(185,234,215,.32), transparent 32%),
+        rgba(255,255,255,.44);
+      border: 1px solid rgba(75,47,47,.08);
+      box-shadow: 0 24px 70px rgba(75,47,47,.08);
     }
 
     .gallery-filters {
@@ -477,6 +513,12 @@
       font-weight: 800;
       color: var(--choco);
       cursor: pointer;
+      transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .gallery-filter:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(75,47,47,.08);
     }
 
     .gallery-filter.active {
@@ -500,6 +542,19 @@
       overflow: hidden;
       box-shadow: var(--shadow);
       background: #f5e7de;
+      border: 0;
+      cursor: zoom-in;
+      width: 100%;
+      padding: 0;
+      text-align: left;
+      font: inherit;
+      animation: scaleIn .45s ease both;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 28px 60px rgba(75,47,47,.16);
     }
 
     .gallery-item img {
@@ -516,6 +571,12 @@
         var(--media-url, none);
       background-size: cover;
       background-position: center;
+      transition: transform .45s ease, filter .3s ease;
+    }
+
+    .gallery-item:hover .gallery-photo {
+      transform: scale(1.06);
+      filter: saturate(1.08) contrast(1.03);
     }
 
     .product-image.image-missing,
@@ -564,6 +625,96 @@
       color: rgba(255,255,255,0.78);
       font-size: 13px;
       margin-top: 4px;
+    }
+
+    .gallery-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .gallery-count {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .gallery-more {
+      border: 1px solid rgba(75,47,47,.1);
+      background: rgba(255,255,255,.88);
+      color: var(--choco);
+      box-shadow: var(--shadow);
+    }
+
+    .gallery-more.is-hidden {
+      display: none;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      background: rgba(39, 25, 25, .78);
+      backdrop-filter: blur(14px);
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox-panel {
+      position: relative;
+      width: min(1040px, 94vw);
+      max-height: 90vh;
+      border-radius: 34px;
+      overflow: hidden;
+      background: var(--cream);
+      box-shadow: 0 34px 90px rgba(0,0,0,.34);
+      animation: scaleIn .24s ease both;
+    }
+
+    .lightbox-image {
+      min-height: min(72vh, 720px);
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #1f1515;
+    }
+
+    .lightbox-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      color: var(--choco);
+      font-weight: 900;
+    }
+
+    .lightbox-caption span {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      color: var(--choco);
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: var(--shadow);
     }
 
     .gallery-controls {
@@ -1069,7 +1220,11 @@
       .section-head p { font-size: 16px; }
       .product-meta { flex-direction: column; align-items: stretch; }
       .product-meta .btn { width: 100%; }
-      .gallery { grid-auto-columns: minmax(220px, 82vw); }
+      .gallery-shell { padding: 14px; border-radius: 24px; }
+      .gallery { grid-template-columns: 1fr; }
+      .gallery-item { min-height: 300px; }
+      .lightbox { padding: 14px; }
+      .lightbox-caption { flex-direction: column; }
       .instagram-card { min-height: 480px; }
       .selected-product-card { grid-template-columns: 88px 1fr; padding: 16px; }
       .selected-product-card img { width: 88px; height: 88px; }
@@ -1082,6 +1237,15 @@
       .banner { padding: 30px; }
       .whatsapp { left: 16px; right: 16px; justify-content: center; text-align: center; }
       footer { grid-template-columns: 1fr; padding-bottom: 148px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
     }
   </style>
 </head>
@@ -1306,6 +1470,10 @@
         <div class="gallery-controls">
           <button class="gallery-control" type="button" id="gallery-prev" aria-label="Veure imatges anteriors">‹</button>
           <button class="gallery-control" type="button" id="gallery-next" aria-label="Veure més imatges">›</button>
+        </div>
+        <div class="gallery-summary">
+          <span class="gallery-count" id="gallery-count">Mostrant una selecció d’imatges</span>
+          <button class="btn gallery-more" type="button" id="gallery-load-more">Veure totes les imatges</button>
         </div>
       </div>
     </section>
@@ -1629,6 +1797,17 @@
 
   <a class="whatsapp js-whatsapp-link" href="https://wa.me/34626685034?text=Hola%20Nati%2C%20vull%20informacio" target="_blank" rel="noopener">💬 Escriu per WhatsApp</a>
 
+  <div class="lightbox" id="gallery-lightbox" aria-hidden="true" role="dialog" aria-label="Imatge ampliada de la galeria">
+    <div class="lightbox-panel">
+      <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Tancar imatge ampliada">×</button>
+      <div class="lightbox-image" id="lightbox-image"></div>
+      <div class="lightbox-caption">
+        <strong id="lightbox-title">Nati Dolços i Festa</strong>
+        <span id="lightbox-category">Galeria</span>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_BASE_URL = (() => {
       const configuredUrl = String(window.NATI_API_BASE_URL || "").trim().replace(/\/$/, "");
@@ -1743,8 +1922,15 @@
     const productsGrid = document.getElementById("products-grid");
     const galleryGrid = document.getElementById("gallery-grid");
     const galleryFilters = document.getElementById("gallery-filters");
+    const galleryCount = document.getElementById("gallery-count");
+    const galleryLoadMoreButton = document.getElementById("gallery-load-more");
     const galleryPrevButton = document.getElementById("gallery-prev");
     const galleryNextButton = document.getElementById("gallery-next");
+    const galleryLightbox = document.getElementById("gallery-lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxTitle = document.getElementById("lightbox-title");
+    const lightboxCategory = document.getElementById("lightbox-category");
+    const lightboxClose = document.getElementById("lightbox-close");
     const instagramFeed = document.getElementById("instagram-feed");
     const serviceSelect = form.querySelector('select[name="servei"]');
     const urlParams = new URLSearchParams(window.location.search);
@@ -1752,6 +1938,8 @@
     let availableProducts = [];
     let activeGalleryProducts = [];
     let currentGalleryCategory = "all";
+    let galleryExpanded = false;
+    const galleryInitialLimit = 9;
     const staticGallerySeed = [
       {
         nom: "Taula dolça / candy bar",
@@ -2208,6 +2396,7 @@
             return normalisedCategory.includes(currentGalleryCategory);
           });
         });
+      const visibleImages = galleryExpanded ? galleryImages : galleryImages.slice(0, galleryInitialLimit);
 
       if (galleryImages.length === 0) {
         galleryGrid.innerHTML = `
@@ -2218,19 +2407,33 @@
             </div>
           </article>
         `;
+        if (galleryCount) galleryCount.textContent = "No hi ha imatges en aquesta categoria encara";
+        galleryLoadMoreButton?.classList.add("is-hidden");
         updateGalleryControlsState();
         return;
       }
 
-      galleryGrid.innerHTML = galleryImages.map(({ product, image, categories }) => `
-        <article class="gallery-item">
+      galleryGrid.innerHTML = visibleImages.map(({ product, image, categories }, index) => `
+        <button class="gallery-item js-gallery-open" type="button" style="animation-delay:${Math.min(index * 35, 280)}ms" data-image="${escapeHtml(getCssImageUrl(image.url))}" data-title="${escapeHtml(product.nom || "Proposta")}" data-category="${escapeHtml(categories[0] || product.categoria || "Celebració especial")}">
           <div class="gallery-photo" style="${mediaBgStyle(image.url)}" role="img" aria-label="${escapeHtml(image.alt || product.nom || "Galeria de productes")}"></div>
           <div class="gallery-item-caption">
             <strong>${escapeHtml(product.nom || "Proposta")}</strong>
             <span>${escapeHtml(categories[0] || product.categoria || "Celebració especial")}</span>
           </div>
-        </article>
+        </button>
       `).join("");
+
+      if (galleryCount) {
+        galleryCount.textContent = galleryExpanded
+          ? `Mostrant ${galleryImages.length} imatges`
+          : `Mostrant ${visibleImages.length} de ${galleryImages.length} imatges`;
+      }
+
+      if (galleryLoadMoreButton) {
+        galleryLoadMoreButton.classList.toggle("is-hidden", galleryImages.length <= galleryInitialLimit);
+        galleryLoadMoreButton.textContent = galleryExpanded ? "Mostrar menys" : `Veure totes les imatges (${galleryImages.length})`;
+      }
+
       updateGalleryControlsState();
     }
 
@@ -2254,10 +2457,56 @@
         if (!button) return;
 
         currentGalleryCategory = normaliseCategory(button.dataset.category || "all");
+        galleryExpanded = false;
         galleryFilters.querySelectorAll(".gallery-filter").forEach((item) => {
           item.classList.toggle("active", item === button);
         });
         renderGallery(activeGalleryProducts.length > 0 ? activeGalleryProducts : products);
+      });
+    }
+
+    function openGalleryLightbox({ image, title, category }) {
+      if (!galleryLightbox || !lightboxImage) return;
+
+      lightboxImage.style.backgroundImage = `url("${image}")`;
+      lightboxTitle.textContent = title || "Nati Dolços i Festa";
+      lightboxCategory.textContent = category || "Galeria";
+      galleryLightbox.classList.add("open");
+      galleryLightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeGalleryLightbox() {
+      if (!galleryLightbox) return;
+
+      galleryLightbox.classList.remove("open");
+      galleryLightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function wireGalleryInteractions() {
+      galleryLoadMoreButton?.addEventListener("click", () => {
+        galleryExpanded = !galleryExpanded;
+        renderGallery(activeGalleryProducts);
+      });
+
+      galleryGrid?.addEventListener("click", (event) => {
+        const item = event.target.closest(".js-gallery-open");
+        if (!item) return;
+
+        openGalleryLightbox({
+          image: item.dataset.image,
+          title: item.dataset.title,
+          category: item.dataset.category
+        });
+      });
+
+      lightboxClose?.addEventListener("click", closeGalleryLightbox);
+      galleryLightbox?.addEventListener("click", (event) => {
+        if (event.target === galleryLightbox) closeGalleryLightbox();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeGalleryLightbox();
       });
     }
 
@@ -2452,6 +2701,7 @@
 
     renderGallery([]);
     wireGalleryFilters([]);
+    wireGalleryInteractions();
     attachImageFallbacks();
     wireGalleryControls();
 
@@ -2466,6 +2716,24 @@
         navToggle?.setAttribute("aria-expanded", "false");
       });
     });
+
+    document.querySelectorAll("section, .product-card, .service-card, .celebration-card, .faq-item").forEach((element) => {
+      element.classList.add("reveal");
+    });
+
+    if ("IntersectionObserver" in window) {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
+    } else {
+      document.querySelectorAll(".reveal").forEach((element) => element.classList.add("is-visible"));
+    }
 
     document.querySelectorAll(".js-celebration-link").forEach((link) => {
       link.addEventListener("click", (event) => {
