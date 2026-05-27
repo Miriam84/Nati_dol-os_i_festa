@@ -701,6 +701,11 @@
       font-weight: 700;
     }
 
+    .lightbox-cta {
+      margin: 0 22px 22px;
+      width: calc(100% - 44px);
+    }
+
     .lightbox-close {
       position: absolute;
       top: 14px;
@@ -1805,6 +1810,7 @@
         <strong id="lightbox-title">Nati Dolços i Festa</strong>
         <span id="lightbox-category">Galeria</span>
       </div>
+      <a class="btn btn-primary lightbox-cta" id="lightbox-whatsapp" href="https://wa.me/34626685034?text=Hola%20Nati%2C%20vull%20una%20proposta%20com%20aquesta" target="_blank" rel="noopener">Vull això</a>
     </div>
   </div>
 
@@ -1931,6 +1937,7 @@
     const lightboxTitle = document.getElementById("lightbox-title");
     const lightboxCategory = document.getElementById("lightbox-category");
     const lightboxClose = document.getElementById("lightbox-close");
+    const lightboxWhatsapp = document.getElementById("lightbox-whatsapp");
     const instagramFeed = document.getElementById("instagram-feed");
     const serviceSelect = form.querySelector('select[name="servei"]');
     const urlParams = new URLSearchParams(window.location.search);
@@ -2458,11 +2465,30 @@
 
         currentGalleryCategory = normaliseCategory(button.dataset.category || "all");
         galleryExpanded = false;
+        trackEvent("gallery_filter_click", {
+          gallery_category: button.textContent.trim(),
+          category_key: currentGalleryCategory
+        });
         galleryFilters.querySelectorAll(".gallery-filter").forEach((item) => {
           item.classList.toggle("active", item === button);
         });
         renderGallery(activeGalleryProducts.length > 0 ? activeGalleryProducts : products);
       });
+    }
+
+    function getAbsoluteAssetUrl(url) {
+      if (!url) return "";
+      try {
+        return new URL(url, window.location.origin).toString();
+      } catch {
+        return url;
+      }
+    }
+
+    function buildGalleryWhatsappUrl({ title, category, image }) {
+      const imageUrl = getAbsoluteAssetUrl(image);
+      const text = encodeURIComponent(`Hola Nati, vull una proposta com aquesta.\nIdea: ${title || "Galeria"}\nCategoria: ${category || "Celebració"}${imageUrl ? `\nImatge: ${imageUrl}` : ""}`);
+      return `https://wa.me/34626685034?text=${text}`;
     }
 
     function openGalleryLightbox({ image, title, category }) {
@@ -2471,9 +2497,19 @@
       lightboxImage.style.backgroundImage = `url("${image}")`;
       lightboxTitle.textContent = title || "Nati Dolços i Festa";
       lightboxCategory.textContent = category || "Galeria";
+      if (lightboxWhatsapp) {
+        lightboxWhatsapp.href = buildGalleryWhatsappUrl({ title, category, image });
+        lightboxWhatsapp.dataset.galleryTitle = title || "Galeria";
+        lightboxWhatsapp.dataset.galleryCategory = category || "Galeria";
+        lightboxWhatsapp.dataset.galleryImage = getAbsoluteAssetUrl(image);
+      }
       galleryLightbox.classList.add("open");
       galleryLightbox.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
+      trackEvent("gallery_image_open", {
+        item_name: title || "Galeria",
+        gallery_category: category || "Galeria"
+      });
     }
 
     function closeGalleryLightbox() {
@@ -2487,6 +2523,9 @@
     function wireGalleryInteractions() {
       galleryLoadMoreButton?.addEventListener("click", () => {
         galleryExpanded = !galleryExpanded;
+        trackEvent(galleryExpanded ? "gallery_expand" : "gallery_collapse", {
+          category_key: currentGalleryCategory
+        });
         renderGallery(activeGalleryProducts);
       });
 
@@ -2504,6 +2543,13 @@
       lightboxClose?.addEventListener("click", closeGalleryLightbox);
       galleryLightbox?.addEventListener("click", (event) => {
         if (event.target === galleryLightbox) closeGalleryLightbox();
+      });
+      lightboxWhatsapp?.addEventListener("click", () => {
+        trackEvent("gallery_whatsapp_cta_click", {
+          item_name: lightboxWhatsapp.dataset.galleryTitle || "Galeria",
+          gallery_category: lightboxWhatsapp.dataset.galleryCategory || "Galeria",
+          image_url: lightboxWhatsapp.dataset.galleryImage || ""
+        });
       });
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape") closeGalleryLightbox();
@@ -2534,6 +2580,14 @@
     function showCheckoutStatus(type, message) {
       checkoutStatusBox.textContent = message;
       checkoutStatusBox.className = "status visible " + type;
+    }
+
+    function trackEvent(name, params = {}) {
+      if (typeof window.gtag !== "function") return;
+      window.gtag("event", name, {
+        page_path: window.location.pathname,
+        ...params
+      });
     }
 
     function getNetworkErrorMessage(error) {
@@ -2596,6 +2650,17 @@
         });
       }
 
+      document.querySelectorAll(".js-whatsapp-link").forEach((link) => {
+        if (link.dataset.analyticsBound === "true") return;
+        link.dataset.analyticsBound = "true";
+        link.addEventListener("click", () => {
+          trackEvent("whatsapp_click", {
+            link_text: link.textContent.trim(),
+            destination: link.href
+          });
+        });
+      });
+
       if (config.contactSummary) {
         document.getElementById("contact-line").textContent = config.contactSummary;
       }
@@ -2654,6 +2719,11 @@
 
         productsGrid.querySelectorAll(".js-reserve-product").forEach((button) => {
           button.addEventListener("click", () => {
+            trackEvent("product_cta_click", {
+              item_name: button.dataset.product || "",
+              product_id: button.dataset.productId || ""
+            });
+
             if (!config.checkoutEnabled) {
               prefillLeadForm(button.dataset.product);
               return;
@@ -2738,12 +2808,18 @@
     document.querySelectorAll(".js-celebration-link").forEach((link) => {
       link.addEventListener("click", (event) => {
         event.preventDefault();
+        trackEvent("celebration_cta_click", {
+          event_type: link.dataset.event || ""
+        });
         prefillEventForm(link.dataset.event || "");
       });
     });
 
     document.querySelectorAll(".js-static-product").forEach((button) => {
       button.addEventListener("click", () => {
+        trackEvent("product_cta_click", {
+          item_name: button.dataset.product || ""
+        });
         prefillLeadForm(button.dataset.product || "");
       });
     });
@@ -2760,6 +2836,10 @@
 
       const formData = new FormData(form);
       const payload = Object.fromEntries(formData.entries());
+      trackEvent("lead_form_submit", {
+        service: payload.servei || "",
+        event_type: payload.tipus_esdeveniment || ""
+      });
 
       try {
         await siteConfigPromise.catch(() => null);
@@ -2779,8 +2859,16 @@
         }
 
         form.reset();
+        trackEvent("lead_form_success", {
+          service: payload.servei || "",
+          event_type: payload.tipus_esdeveniment || ""
+        });
         showStatus("success", "Consulta enviada correctament. Nati la rebrà i et contactarà al més prompte possible.");
       } catch (error) {
+        trackEvent("lead_form_error", {
+          service: payload.servei || "",
+          error_message: getNetworkErrorMessage(error)
+        });
         showStatus("error", getNetworkErrorMessage(error));
       } finally {
         setLoading(false);
@@ -2795,6 +2883,9 @@
 
       const formData = new FormData(checkoutForm);
       const payload = Object.fromEntries(formData.entries());
+      trackEvent("checkout_submit", {
+        product_id: payload.product_id || ""
+      });
 
       try {
         const response = await fetch(apiUrl("/api/checkout"), {
@@ -2816,10 +2907,18 @@
         }
 
         checkoutForm.reset();
+        trackEvent("checkout_success", {
+          product_id: payload.product_id || "",
+          lead_only: Boolean(result.leadOnly)
+        });
         showCheckoutStatus("success", result.leadOnly
           ? "Reserva enviada correctament. Nati la revisarà i es posarà en contacte amb tu."
           : "Reserva creada correctament.");
       } catch (error) {
+        trackEvent("checkout_error", {
+          product_id: payload.product_id || "",
+          error_message: getNetworkErrorMessage(error)
+        });
         showCheckoutStatus("error", getNetworkErrorMessage(error));
       } finally {
         setCheckoutLoading(false);

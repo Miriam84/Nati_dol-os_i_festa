@@ -556,17 +556,51 @@ const server = http.createServer(async (request, response) => {
 
   if (request.method === "GET" && requestUrl.pathname === "/sitemap.xml") {
     const siteUrl = buildPublicUrl(request);
+    const routes = [
+      { path: "/", priority: "1.0", changefreq: "weekly" },
+      { path: "/checkout", priority: "0.4", changefreq: "monthly" }
+    ];
     sendText(response, 200, [
       '<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-      "  <url>",
-      `    <loc>${siteUrl}/</loc>`,
-      "    <changefreq>weekly</changefreq>",
-      "    <priority>1.0</priority>",
-      "  </url>",
+      ...routes.flatMap((route) => [
+        "  <url>",
+        `    <loc>${siteUrl}${route.path}</loc>`,
+        `    <changefreq>${route.changefreq}</changefreq>`,
+        `    <priority>${route.priority}</priority>`,
+        "  </url>"
+      ]),
       "</urlset>",
       ""
     ].join("\n"), "application/xml; charset=utf-8");
+    return;
+  }
+
+  if (request.method === "GET" && requestUrl.pathname === "/llms.txt") {
+    const siteUrl = buildPublicUrl(request);
+    sendText(response, 200, [
+      "# Nati Dolços i Festa",
+      "",
+      "Nati Dolços i Festa és un negoci local de Tortosa especialitzat en taules dolces, candy bar, decoració amb globus, photocalls, pastissos de xuxes, rams de xuxes, regals personalitzats i muntatges per a celebracions.",
+      "",
+      "Àrea de servei: Tortosa, Terres de l'Ebre i província de Tarragona.",
+      "",
+      "Serveis principals:",
+      "- Taules dolces i candy bar per a comunions, bodes, bateigs, aniversaris i baby showers.",
+      "- Decoració amb globus, arcs, garlandes, photocalls i ambientació d'espais.",
+      "- Pastissos de xuxes, rams de xuxes i detalls dolços personalitzats.",
+      "- Regals originals i sorpreses amb bitllets.",
+      "",
+      "URLs importants:",
+      `- Web principal: ${siteUrl}/`,
+      `- Sitemap: ${siteUrl}/sitemap.xml`,
+      `- Catàleg i configuració pública: ${siteUrl}/api/config`,
+      `- Galeria visual: ${siteUrl}/#galeria`,
+      `- Contacte i pressupostos: ${siteUrl}/#contacte`,
+      "",
+      "Objectiu de la web: generar converses per WhatsApp, consultes de pressupost i reserves per a celebracions personalitzades.",
+      ""
+    ].join("\n"));
     return;
   }
 
