@@ -35,7 +35,10 @@ function loadEnvFile() {
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, {
     "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store, max-age=0"
+    "Cache-Control": "no-store, max-age=0",
+    "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "*",
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
   });
   response.end(JSON.stringify(payload));
 }
@@ -50,7 +53,8 @@ function sendHtml(response, statusCode, html) {
 
 function sendText(response, statusCode, text, contentType = "text/plain; charset=utf-8") {
   response.writeHead(statusCode, {
-    "Content-Type": contentType
+    "Content-Type": contentType,
+    "Cache-Control": "no-store"
   });
   response.end(text);
 }
@@ -135,6 +139,21 @@ function readFallbackProducts() {
   }
 }
 
+function classifyGalleryCategories(imagePath, fallbackCategory = "") {
+  const value = String(imagePath || "").toLowerCase();
+
+  if (value.includes("taula-dolca-candy-bar")) return ["Esdeveniments"];
+  if (value.includes("globus-d-heli-personalitzats")) return ["Decoració"];
+  if (value.includes("pastis-de-xuxes-personalitzat")) return ["Xuxes personalitzades"];
+  if (value.includes("ram-de-xuxes")) return ["Regals i detalls"];
+  if (value.includes("regals-originals-i-detalls")) return ["Regals i detalls"];
+  if (value.includes("sorpreses-amb-bitllets")) return ["Regals i detalls"];
+
+  if (value.includes("decoracio-de-taules-detalls")) return ["Decoració", "Regals i detalls"];
+
+  return fallbackCategory ? [fallbackCategory] : [];
+}
+
 function getInstagramUsername() {
   return process.env.INSTAGRAM_USERNAME || "nati_dolcos_i_festa";
 }
@@ -155,6 +174,8 @@ function buildAirtableFields(payload) {
   if (payload.tema_colors) fields["Tema o colors"] = payload.tema_colors;
 
   const extraDetails = [
+    payload.tipus_esdeveniment ? `Tipus d'esdeveniment: ${payload.tipus_esdeveniment}` : "",
+    payload.persones ? `Nombre de persones: ${payload.persones}` : "",
     payload.pressupost ? `Pressupost aproximat: ${payload.pressupost}` : "",
     payload.quantitat ? `Quantitat: ${payload.quantitat}` : "",
     payload.notes ? `Notes de la comanda: ${payload.notes}` : "",
@@ -170,6 +191,33 @@ function buildAirtableFields(payload) {
   if (message) fields.Missatge = message;
 
   return fields;
+}
+
+function buildSafeAirtableFields(payload) {
+  const details = [
+    payload.email ? `Email: ${payload.email}` : "",
+    payload.tipus_esdeveniment ? `Tipus de celebració: ${payload.tipus_esdeveniment}` : "",
+    payload.data_festa ? `Data: ${payload.data_festa}` : "",
+    payload.hora ? `Hora aproximada: ${payload.hora}` : "",
+    payload.tipus_entrega ? `Recollida o muntatge: ${payload.tipus_entrega}` : "",
+    payload.zona ? `Població o zona: ${payload.zona}` : "",
+    payload.lloc ? `Lloc: ${payload.lloc}` : "",
+    payload.persones ? `Nombre de persones: ${payload.persones}` : "",
+    payload.pressupost ? `Pressupost aproximat: ${payload.pressupost}` : "",
+    payload.tema_colors ? `Tema o colors: ${payload.tema_colors}` : "",
+    payload.quantitat ? `Quantitat: ${payload.quantitat}` : "",
+    payload.notes ? `Notes de la comanda: ${payload.notes}` : "",
+    payload.checkoutSessionId ? `Stripe session: ${payload.checkoutSessionId}` : "",
+    payload.paymentStatus ? `Estat del pagament: ${payload.paymentStatus}` : "",
+    payload.missatge ? `Missatge: ${payload.missatge}` : ""
+  ].filter(Boolean);
+
+  return {
+    "Nom del client": payload.nom || "",
+    Contacte: payload.telefon || "",
+    Servei: payload.servei || "",
+    Missatge: details.join("\n")
+  };
 }
 
 function buildQuickLeadPayload(payload, product) {
@@ -194,22 +242,34 @@ async function createLeadInAirtable(payload) {
   const tableId = process.env.AIRTABLE_LEADS_TABLE_ID;
   const token = process.env.AIRTABLE_TOKEN;
 
-  const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      records: [
-        {
-          fields: buildAirtableFields(payload)
-        }
-      ]
-    })
-  });
+  async function postLead(fields) {
+    const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        records: [
+          {
+            fields
+          }
+        ]
+      })
+    });
 
-  const result = await response.json();
+    const result = await response.json();
+    return { response, result };
+  }
+
+  let { response, result } = await postLead(buildAirtableFields(payload));
+
+  if (!response.ok) {
+    const message = result?.error?.message || "";
+    if (response.status === 422 && /field/i.test(message)) {
+      ({ response, result } = await postLead(buildSafeAirtableFields(payload)));
+    }
+  }
 
   if (!response.ok) {
     const message = result?.error?.message || "Airtable ha rebutjat la peticio.";
@@ -257,7 +317,10 @@ async function fetchProductsFromAirtable() {
   }
 
   return (result.records || [])
-    .filter((record) => (record.fields || {})["Actiu"] !== false)
+    .filter((record) => {
+      const fieldsRecord = record.fields || {};
+      return fieldsRecord["Actiu"] !== false && Boolean(String(fieldsRecord["Nom"] || "").trim());
+    })
     .map((record) => {
       const fieldsRecord = record.fields || {};
       const assetEntry = localAssets[record.id] || localAssets[slugify(fieldsRecord["Nom"] || "")] || null;
@@ -266,6 +329,7 @@ async function fetchProductsFromAirtable() {
             url: image.thumbnails?.large?.url || image.url || "",
             fullUrl: image.url || "",
             alt: image.filename || fieldsRecord["Nom"] || "Imatge del producte",
+            galleryCategories: classifyGalleryCategories(image.filename || image.url || "", fieldsRecord["Categoria"]?.name || fieldsRecord["Categoria"] || ""),
             index
           })).filter((image) => image.url)
         : [];
@@ -275,6 +339,7 @@ async function fetchProductsFromAirtable() {
             url: image.path,
             fullUrl: image.path,
             alt: image.alt || fieldsRecord["Nom"] || "Imatge del producte",
+            galleryCategories: image.galleryCategories || classifyGalleryCategories(image.path || image.url || image.alt, fieldsRecord["Categoria"]?.name || fieldsRecord["Categoria"] || ""),
             index
           }))
         : [];
@@ -373,7 +438,19 @@ function buildSiteUrl(requestUrl) {
     return process.env.SITE_URL.replace(/\/$/, "");
   }
 
-  return `${requestUrl.protocol}//${requestUrl.host}`;
+  const forwardedProto = requestUrl.headers?.["x-forwarded-proto"];
+  const protocol = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto;
+  return `${protocol || requestUrl.protocol.replace(":", "")}://${requestUrl.host}`;
+}
+
+function buildPublicUrl(request) {
+  if (process.env.SITE_URL) {
+    return process.env.SITE_URL.replace(/\/$/, "");
+  }
+
+  const protocol = request.headers["x-forwarded-proto"] || "https";
+  const host = request.headers["x-forwarded-host"] || request.headers.host || "www.nati.cat";
+  return `${protocol}://${host}`.replace(/\/$/, "");
 }
 
 async function createStripeCheckoutSession({ requestUrl, product, payload }) {
@@ -451,8 +528,45 @@ function serveStaticAsset(requestUrl, response) {
 const server = http.createServer(async (request, response) => {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
 
+  if (request.method === "OPTIONS") {
+    response.writeHead(204, {
+      "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "*",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
+    });
+    response.end();
+    return;
+  }
+
   if (request.method === "GET" && requestUrl.pathname.startsWith("/assets/")) {
     serveStaticAsset(requestUrl, response);
+    return;
+  }
+
+  if (request.method === "GET" && requestUrl.pathname === "/robots.txt") {
+    const siteUrl = buildPublicUrl(request);
+    sendText(response, 200, [
+      "User-agent: *",
+      "Allow: /",
+      `Sitemap: ${siteUrl}/sitemap.xml`,
+      ""
+    ].join("\n"));
+    return;
+  }
+
+  if (request.method === "GET" && requestUrl.pathname === "/sitemap.xml") {
+    const siteUrl = buildPublicUrl(request);
+    sendText(response, 200, [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+      "  <url>",
+      `    <loc>${siteUrl}/</loc>`,
+      "    <changefreq>weekly</changefreq>",
+      "    <priority>1.0</priority>",
+      "  </url>",
+      "</urlset>",
+      ""
+    ].join("\n"), "application/xml; charset=utf-8");
     return;
   }
 
@@ -489,6 +603,16 @@ const server = http.createServer(async (request, response) => {
         warning: error.message || "No s'ha pogut carregar el cataleg."
       });
     }
+    return;
+  }
+
+  if (request.method === "GET" && requestUrl.pathname === "/api/health") {
+    sendJson(response, 200, {
+      ok: true,
+      airtableConfigured: isConfigured(),
+      stripeConfigured: isStripeConfigured(),
+      siteUrl: buildPublicUrl(request)
+    });
     return;
   }
 

@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nati Dolcos i Festa | Taules dolces, xuxes i decoració a Tortosa i Terres de l’Ebre</title>
-  <meta name="description" content="Taules dolces, pastissos de xuxes, rams, regals originals i decoració amb globus a Tortosa, les Terres de l’Ebre i la província de Tarragona per a comunions, aniversaris, bodes i festes especials." />
+  <title>Nati Dolços i Festa | Candy bar, taules dolces i decoració amb globus a Tarragona</title>
+  <meta name="description" content="Taules dolces, candy bar, decoració amb globus, photocalls, baby showers, comunions, bodes i festes de 15 i 18 anys a Tortosa, les Terres de l’Ebre i Tarragona." />
   <meta name="robots" content="index,follow,max-image-preview:large" />
   <meta name="theme-color" content="#fff7ef" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="canonical" href="https://www.natidolcosifesta.com/" id="canonical-link" />
+  <link rel="canonical" href="https://www.nati.cat/" id="canonical-link" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nati Dolcos i Festa | Taules dolces, xuxes i decoració a Tortosa" />
-  <meta property="og:description" content="Decoració amb globus, taules dolces, xuxes i detalls personalitzats a Tortosa, les Terres de l’Ebre i Tarragona." />
-  <meta property="og:url" content="https://www.natidolcosifesta.com/" id="og-url" />
+  <meta property="og:title" content="Nati Dolços i Festa | Candy bar i decoració amb globus a Tarragona" />
+  <meta property="og:description" content="Taules dolces, candy bar, photocalls, regals personalitzats i decoració per a comunions, bodes, baby showers i aniversaris." />
+  <meta property="og:url" content="https://www.nati.cat/" id="og-url" />
   <meta property="og:site_name" content="Nati Dolcos i Festa" />
   <meta property="og:locale" content="ca_ES" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Nati Dolcos i Festa" />
-  <meta name="twitter:description" content="Taules dolces, xuxes, globus i detalls personalitzats a Tortosa, les Terres de l’Ebre i Tarragona." />
+  <meta name="twitter:description" content="Taules dolces, candy bar, xuxes, globus i detalls personalitzats a Tortosa, les Terres de l’Ebre i Tarragona." />
   <meta name="google-site-verification" content="" id="google-site-verification" />
   <script type="application/ld+json" id="structured-data">
     {
@@ -25,7 +25,7 @@
       "@type": "LocalBusiness",
       "name": "Nati Dolcos i Festa",
       "description": "Taules dolces, regals originals, xuxes personalitzades i decoració per a celebracions a Tortosa, les Terres de l’Ebre i Tarragona.",
-      "url": "https://www.natidolcosifesta.com/",
+      "url": "https://www.nati.cat/",
       "telephone": "+34626685034",
       "areaServed": ["Tortosa", "Terres de l'Ebre", "Província de Tarragona"],
       "priceRange": "EUR",
@@ -112,6 +112,19 @@
       align-items: center;
       font-size: 15px;
       color: var(--muted);
+    }
+
+    .nav-toggle {
+      display: none;
+      border: 0;
+      background: var(--white);
+      color: var(--choco);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+      cursor: pointer;
     }
 
     .btn {
@@ -283,6 +296,64 @@
       gap: 18px;
     }
 
+    .celebrations {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .celebration-card {
+      position: relative;
+      min-height: 280px;
+      border-radius: 30px;
+      overflow: hidden;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)),
+        linear-gradient(135deg, #ffd9df, #fff6ea 58%, #c9f2e5);
+      background-size: cover;
+      background-position: center;
+      color: white;
+    }
+
+    .celebration-card::before {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .celebration-card > * { position: relative; }
+    .celebration-card h3 { margin: 10px 0 8px; font-size: 28px; line-height: 1; }
+    .celebration-card p { margin: 0; color: rgba(255,255,255,0.86); }
+    .celebration-tag {
+      width: fit-content;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .celebration-link {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      color: white;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255,255,255,0.4);
+      padding-bottom: 4px;
+    }
+
     .service-card, .product-card, .step, .form-card, .faq-item {
       background: var(--white);
       border-radius: var(--radius);
@@ -320,6 +391,7 @@
     }
 
     .product-image {
+      position: relative;
       min-height: 240px;
       border-radius: 22px 22px 0 0;
       background: linear-gradient(135deg, rgba(247,168,184,0.6), rgba(255,247,239,1), rgba(185,234,215,0.65));
@@ -331,6 +403,17 @@
       height: 100%;
       min-height: 240px;
       object-fit: cover;
+    }
+
+    .media-bg {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      background:
+        linear-gradient(135deg, rgba(247,168,184,0.28), rgba(255,247,239,0.18), rgba(185,234,215,0.26)),
+        var(--media-url, none);
+      background-size: cover;
+      background-position: center;
     }
 
     .product-image-fallback {
@@ -376,25 +459,45 @@
       position: relative;
     }
 
+    .gallery-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .gallery-filter {
+      border: 1px solid rgba(75,47,47,0.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.8);
+      padding: 10px 14px;
+      font: inherit;
+      font-weight: 800;
+      color: var(--choco);
+      cursor: pointer;
+    }
+
+    .gallery-filter.active {
+      background: var(--choco);
+      color: white;
+      border-color: var(--choco);
+    }
+
     .gallery {
       display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(260px, 320px);
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 18px;
-      overflow-x: auto;
-      scroll-snap-type: x proximity;
-      padding-bottom: 10px;
-      scrollbar-width: thin;
+      overflow: visible;
+      padding-bottom: 0;
     }
 
     .gallery-item {
       position: relative;
-      min-height: 220px;
+      min-height: 260px;
       border-radius: 28px;
       overflow: hidden;
       box-shadow: var(--shadow);
       background: #f5e7de;
-      scroll-snap-align: start;
     }
 
     .gallery-item img {
@@ -402,6 +505,41 @@
       height: 100%;
       object-fit: cover;
     }
+
+    .gallery-photo {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(247,168,184,0.22), rgba(255,247,239,0.16), rgba(185,234,215,0.24)),
+        var(--media-url, none);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .product-image.image-missing,
+    .gallery-item.image-missing,
+    .instagram-card.image-missing {
+      background: linear-gradient(135deg, rgba(247,168,184,0.52), rgba(255,247,239,1), rgba(185,234,215,0.7));
+    }
+
+    .product-image.image-missing::after,
+    .gallery-item.image-missing::after,
+    .instagram-card.image-missing::after {
+      content: "Imatge en preparació";
+      position: absolute;
+      inset: auto 18px 18px 18px;
+      display: inline-flex;
+      justify-content: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(75,47,47,0.7);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      z-index: 2;
+    }
+
+    .image-missing img { display: none; }
 
     .gallery-item-caption {
       position: absolute;
@@ -431,6 +569,11 @@
       justify-content: flex-end;
       gap: 10px;
       margin-top: 18px;
+      display: none;
+    }
+
+    .gallery-controls.is-hidden {
+      display: none;
     }
 
     .gallery-control {
@@ -516,14 +659,13 @@
 
     .instagram-card {
       position: relative;
-      min-height: 560px;
+      min-height: 360px;
       border-radius: 26px;
       overflow: hidden;
       box-shadow: var(--shadow);
       background: #f5e7de;
     }
 
-    .instagram-card iframe,
     .instagram-card img {
       width: 100%;
       height: 100%;
@@ -547,6 +689,29 @@
       border-radius: 999px;
       font-size: 13px;
       font-weight: 800;
+    }
+
+    .instagram-copy {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 54px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(75,47,47,0.74);
+      color: white;
+      backdrop-filter: blur(8px);
+    }
+
+    .instagram-copy strong,
+    .instagram-copy span {
+      display: block;
+    }
+
+    .instagram-copy span {
+      color: rgba(255,255,255,0.82);
+      margin-top: 4px;
+      font-size: 14px;
     }
 
     .banner {
@@ -860,11 +1025,26 @@
       .hero-card { min-height: 420px; }
       .hero { gap: 30px; }
       .form-wrap, .contact-grid { gap: 26px; }
-      .nav-links { display: none; }
+      .nav-toggle { display: inline-flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        left: 5vw;
+        right: 5vw;
+        top: calc(100% + 10px);
+        background: rgba(255,247,239,0.98);
+        border: 1px solid rgba(75,47,47,0.08);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+        padding: 18px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links.open { display: flex; }
     }
 
     @media (max-width: 640px) {
-      .trust, .services, .products, .steps, .faq, .instagram-feed { grid-template-columns: 1fr; }
+      .trust, .services, .products, .steps, .faq, .instagram-feed, .celebrations { grid-template-columns: 1fr; }
       form { grid-template-columns: 1fr; }
       section { padding: 56px 5vw; }
       .topbar { padding: 10px 14px; font-size: 13px; }
@@ -911,10 +1091,11 @@
       <span class="logo-mark">N</span>
       <span>Nati Dolcos i Festa</span>
     </a>
-    <nav class="nav-links" aria-label="Navegació principal">
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menú</button>
+    <nav class="nav-links" id="nav-links" aria-label="Navegació principal">
+      <a href="#celebracions">Celebracions</a>
       <a href="#serveis">Que fem</a>
       <a href="#botiga">Botiga</a>
-      <a href="/checkout" target="_blank" rel="noopener">Checkout</a>
       <a href="#com-funciona">Com funciona</a>
       <a href="#contacte">Contacte</a>
       <a class="btn btn-primary js-whatsapp-link" href="https://wa.me/34626685034?text=Hola%20Nati%2C%20vull%20informacio%20per%20a%20una%20festa" target="_blank" rel="noopener">WhatsApp</a>
@@ -924,34 +1105,61 @@
   <main id="inici">
     <section class="hero">
       <div>
-        <span class="eyebrow">Taules dolces · Xuxes · Globus · Regals</span>
-        <h1>Detalls bonics i dolços per a una celebració que es recorda.</h1>
-        <p>Creem taules dolces, pastissos i rams de xuxes, regals originals i decoracions amb globus per a aniversaris, comunions, bodes, bateigs, baby showers i moments molt especials a Tortosa, les Terres de l’Ebre i la província de Tarragona.</p>
+        <span class="eyebrow">Candy bar · Globus · Photocall · Regals personalitzats</span>
+        <h1>Fem que la teua celebració es vegi espectacular i es recordi de veritat.</h1>
+        <p>Taules dolces, candy bar, decoració amb globus, photocalls, pastissos de xuxes, rams i muntatges per a comunions, bodes, baby showers, aniversaris i festes de 15 i 18 anys a Tortosa, les Terres de l’Ebre i Tarragona.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#botiga">Veure opcions</a>
-          <a class="btn btn-secondary" href="/checkout" target="_blank" rel="noopener">Comprar o reservar</a>
+          <a class="btn btn-primary js-whatsapp-link" href="https://wa.me/34626685034?text=Hola%20Nati%2C%20vull%20pressupost%20per%20a%20una%20celebracio" target="_blank" rel="noopener">Demanar pressupost per WhatsApp</a>
+          <a class="btn btn-secondary" href="#galeria">Veure idees i muntatges</a>
         </div>
         <div class="trust">
-          <div><strong>Fet a la teua mida</strong><br />Colors, temàtica, edat i estil adaptats a cada celebració.</div>
-          <div><strong>Assessorament proper</strong><br />T’ajudem a triar la millor opció segons espai, idea i pressupost.</div>
-          <div><strong>Reserva senzilla</strong><br />Pots consultar, reservar o comprar en pocs passos.</div>
+          <div><strong>Propostes personalitzades</strong><br />Colors, temàtica, espai i estil adaptats a cada celebració.</div>
+          <div><strong>Assessorament proper</strong><br />T’ajudem a decidir què queda millor i què encaixa amb el teu pressupost.</div>
+          <div><strong>Resultat visual potent</strong><br />Muntatges pensats per sorprendre en directe i quedar preciosos a les fotos.</div>
         </div>
       </div>
 
       <div class="hero-card" aria-label="Mostra visual de serveis de Nati">
         <div class="photo-grid">
-          <div class="photo-tile large" id="hero-tile-events"><strong>Taules dolces</strong><span>Comunions, bodes i bateigs</span></div>
-          <div class="photo-tile" id="hero-tile-gifts"><strong>Regals originals</strong><span>Detalls per sorprendre</span></div>
-          <div class="photo-tile" id="hero-tile-balloons"><strong>Globus i photocall</strong><span>18 anys, baby shower i festes</span></div>
+          <div class="photo-tile large" id="hero-tile-events" style="background-image:url('assets/products/taula-dolca-candy-bar-01.webp')"><strong>Taules dolces</strong><span>Comunions, bodes i bateigs</span></div>
+          <div class="photo-tile" id="hero-tile-gifts" style="background-image:url('assets/products/regals-originals-i-detalls-01.webp')"><strong>Regals originals</strong><span>Detalls per sorprendre</span></div>
+          <div class="photo-tile" id="hero-tile-balloons" style="background-image:url('assets/products/globus-d-heli-personalitzats-01.jpg')"><strong>Globus i photocall</strong><span>18 anys, baby shower i festes</span></div>
         </div>
-        <div class="floating-note">Cada muntatge està pensat per sorprendre en directe i quedar preciós a les fotos.</div>
+        <div class="floating-note">Comunions, bodes, aniversaris, baby showers i espais decorats amb una imatge més cuidada, actual i memorable.</div>
+      </div>
+    </section>
+
+    <section id="celebracions">
+      <div class="section-head">
+        <h2>Idees pensades per a cada tipus de celebració</h2>
+        <p>No fem packs impersonals. Preparem cada proposta segons l’ocasió, l’espai, l’estil que t’agrada i l’efecte que vols aconseguir.</p>
+      </div>
+      <div class="celebrations">
+        <article class="celebration-card" id="celebration-comunions" style="background-image:linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)), url('assets/products/taula-dolca-candy-bar-01.webp')">
+          <span class="celebration-tag">Comunions</span>
+          <h3>Taules dolces i decoració que llueixen de debò</h3>
+          <p>Combinem dolç, globus i detalls perquè la celebració es vegi cuidada i molt especial.</p>
+          <a class="celebration-link js-celebration-link" href="#contacte" data-event="Comunió">Veure proposta</a>
+        </article>
+        <article class="celebration-card" id="celebration-bodas" style="background-image:linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)), url('assets/products/regals-originals-i-detalls-02.jpg')">
+          <span class="celebration-tag">Bodes i events</span>
+          <h3>Racons dolços, photocalls i detalls que enamoren</h3>
+          <p>Propostes elegants i visuals per vestir el dia amb una imatge coherent i memorable.</p>
+          <a class="celebration-link js-celebration-link" href="#contacte" data-event="Boda">Veure proposta</a>
+        </article>
+        <article class="celebration-card" id="celebration-birthdays" style="background-image:linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)), url('assets/products/globus-d-heli-personalitzats-02.jpg')">
+          <span class="celebration-tag">Aniversaris</span>
+          <h3>15, 18 anys, baby shower i festes amb molta presència</h3>
+          <p>Globus, xuxes i muntatges pensats per sorprendre i convertir qualsevol espai en una festa.</p>
+          <a class="celebration-link js-celebration-link" href="#contacte" data-event="Aniversari">Demana idees</a>
+        </article>
       </div>
     </section>
 
     <section id="serveis">
       <div class="section-head">
-        <h2>Tot el que fa falta per vestir una celebració amb encant</h2>
-        <p>Descobreix idees dolces, regals originals i decoracions pensades per fer cada moment més especial.</p>
+        <h2>Els serveis que més demanen a Nati Dolços i Festa</h2>
+        <p>Des de taules dolces i candy bar fins a decoració amb globus, detalls personalitzats i muntatges per a esdeveniments especials.</p>
       </div>
       <div class="services">
         <article class="service-card">
@@ -979,73 +1187,79 @@
 
     <section id="botiga">
       <div class="section-head">
-        <h2>Productes i serveis disponibles</h2>
-        <p>Consulta opcions, inspira't amb les idees disponibles i obri la reserva o compra del producte que millor encaixe amb la teua celebració.</p>
+        <h2>El que podem preparar per al teu esdeveniment</h2>
+        <p>Tria la idea que més s’acosta al que imagines i obri una reserva ràpida o una sol·licitud de pressupost en pocs passos.</p>
       </div>
       <div class="products" id="products-grid">
         <article class="product-card">
-          <div class="product-image">🍬</div>
-          <span class="tag">Més demanat</span>
-          <h3>Taula dolca personalitzada</h3>
-          <p>Per a comunions, bodes, bateigs, aniversaris i festes especials. Inclou proposta segons tematica i numero de convidats.</p>
-          <div class="product-meta">
-            <span class="price">Des de 120 EUR</span>
-            <a class="btn btn-primary" href="#contacte">Reservar</a>
+          <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/taula-dolca-candy-bar-01.webp')" role="img" aria-label="Taula dolça personalitzada"></div></div>
+          <div class="product-content">
+            <span class="tag">Comunions, bodes i celebracions</span>
+            <h3>Taula dolça personalitzada</h3>
+            <p>Per a comunions, bodes, bateigs, aniversaris i festes especials. Inclou proposta visual segons temàtica i nombre de convidats.</p>
+            <p>Ens adaptem a l’espai, l’estil i el tipus de celebració perquè el resultat es vegi cuidat i especial.</p>
+            <div class="product-meta">
+              <span class="price">Des de 120 EUR</span>
+          <button class="btn btn-primary js-static-product" type="button" data-product="Taula dolça / candy bar">Reservar la teua data</button>
+            </div>
           </div>
         </article>
 
         <article class="product-card">
-          <div class="product-image">🎂</div>
-          <span class="tag">Per encarrec</span>
-          <h3>Pastis de xuxes</h3>
-          <p>Pastis dolc fet a mida per aniversaris, comunions o regals. Tria mida, colors i estil.</p>
-          <div class="product-meta">
-            <span class="price">Des de 25 EUR</span>
-            <a class="btn btn-primary" href="#contacte">Demanar</a>
+          <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/pastis-de-xuxes-personalitzat-01.jpg')" role="img" aria-label="Pastís de xuxes personalitzat"></div></div>
+          <div class="product-content">
+            <span class="tag">Detalls dolços personalitzats</span>
+            <h3>Pastís de xuxes</h3>
+            <p>Pastís dolç fet a mida per aniversaris, comunions o regals. Tria mida, colors i estil.</p>
+            <p>Una idea fàcil de regalar i molt visual, preparada segons l’edat, la temàtica o el moment especial.</p>
+            <div class="product-meta">
+              <span class="price">Des de 25 EUR</span>
+              <button class="btn btn-primary js-static-product" type="button" data-product="Pastís de xuxes personalitzat">Vull aquest detall</button>
+            </div>
           </div>
         </article>
 
         <article class="product-card">
-          <div class="product-image">💐</div>
+          <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/ram-de-xuxes-01.jpg')" role="img" aria-label="Ram de xuxes"></div></div>
           <span class="tag">Regal fàcil</span>
           <h3>Ram de xuxes</h3>
           <p>Un detall original, vistos i dolc per regalar a qualsevol edat.</p>
           <div class="product-meta">
             <span class="price">Des de 18 EUR</span>
-            <a class="btn btn-primary" href="#contacte">Comprar</a>
+            <button class="btn btn-primary js-static-product" type="button" data-product="Ram de xuxes">Comprar</button>
           </div>
         </article>
 
         <article class="product-card">
-          <div class="product-image">🎈</div>
+          <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/globus-d-heli-personalitzats-01.jpg')" role="img" aria-label="Decoració amb globus"></div></div>
           <span class="tag">Fotos boniques</span>
           <h3>Decoració amb globus</h3>
           <p>Decoració per a sales, photocall, aniversaris, 18 anys, festa dels 15 i baby showers.</p>
           <div class="product-meta">
             <span class="price">A pressupost</span>
-            <a class="btn btn-primary" href="#contacte">Consultar</a>
+            <button class="btn btn-primary js-static-product" type="button" data-product="Decoració amb globus">Consultar</button>
           </div>
         </article>
 
         <article class="product-card">
-          <div class="product-image">👶</div>
+          <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/taula-dolca-candy-bar-04.jpg')" role="img" aria-label="Baby shower i celebracions"></div></div>
           <span class="tag">Celebracions</span>
           <h3>Baby shower</h3>
           <p>Taula dolca, globus i detalls decoratius per donar un toc tendre i especial a la festa.</p>
           <div class="product-meta">
             <span class="price">A pressupost</span>
-            <a class="btn btn-primary" href="#contacte">Consultar</a>
+            <button class="btn btn-primary js-static-product" type="button" data-product="Baby shower">Consultar</button>
           </div>
         </article>
 
         <article class="product-card">
-          <div class="product-image">✨</div>
+          <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/regals-originals-i-detalls-01.webp')" role="img" aria-label="Comanda personalitzada"></div></div>
           <span class="tag">A mida</span>
           <h3>Comanda personalitzada</h3>
           <p>Tens una idea concreta? Explica'ns que vols i et direm la millor manera de fer-ho.</p>
           <div class="product-meta">
             <span class="price">Personalitzat</span>
-            <a class="btn btn-primary" href="#contacte">Explicar idea</a>
+            <button class="btn btn-primary js-static-product" type="button" data-product="Comanda personalitzada">Explicar idea</button>
           </div>
         </article>
       </div>
@@ -1053,11 +1267,40 @@
 
     <section id="galeria">
       <div class="section-head">
-        <h2>Galeria d'inspiració</h2>
-        <p>Una seleccio d'imatges reals perquè pugues veure estils, colors i idees per al teu esdeveniment.</p>
+        <h2>Galeria de muntatges i idees reals</h2>
+        <p>Filtra per tipus de servei i descobreix l’estil visual que millor encaixa amb la teua celebració.</p>
       </div>
       <div class="gallery-shell">
-        <div class="gallery" id="gallery-grid"></div>
+        <div class="gallery-filters" id="gallery-filters">
+          <button class="gallery-filter active" type="button" data-category="all">Totes</button>
+          <button class="gallery-filter" type="button" data-category="esdeveniments">Taules dolces</button>
+          <button class="gallery-filter" type="button" data-category="decoració">Globus i decoració</button>
+          <button class="gallery-filter" type="button" data-category="xuxes personalitzades">Pastissos de xuxes</button>
+          <button class="gallery-filter" type="button" data-category="regals">Regals i detalls</button>
+        </div>
+        <div class="gallery" id="gallery-grid">
+          <article class="gallery-item">
+            <div class="gallery-photo" style="--media-url:url('assets/products/taula-dolca-candy-bar-01.webp')" role="img" aria-label="Taula dolça per a celebració"></div>
+            <div class="gallery-item-caption">
+              <strong>Taula dolça / candy bar</strong>
+              <span>Esdeveniments</span>
+            </div>
+          </article>
+          <article class="gallery-item">
+            <div class="gallery-photo" style="--media-url:url('assets/products/globus-d-heli-personalitzats-01.jpg')" role="img" aria-label="Decoració amb globus"></div>
+            <div class="gallery-item-caption">
+              <strong>Decoració amb globus</strong>
+              <span>Decoració</span>
+            </div>
+          </article>
+          <article class="gallery-item">
+            <div class="gallery-photo" style="--media-url:url('assets/products/pastis-de-xuxes-personalitzat-01.jpg')" role="img" aria-label="Pastís de xuxes personalitzat"></div>
+            <div class="gallery-item-caption">
+              <strong>Pastís de xuxes</strong>
+              <span>Xuxes personalitzades</span>
+            </div>
+          </article>
+        </div>
         <div class="gallery-controls">
           <button class="gallery-control" type="button" id="gallery-prev" aria-label="Veure imatges anteriors">‹</button>
           <button class="gallery-control" type="button" id="gallery-next" aria-label="Veure més imatges">›</button>
@@ -1079,8 +1322,8 @@
 
     <section id="checkout">
       <div class="section-head">
-        <h2>Reserva o compra rapida</h2>
-          <p>Completa les dades essencials, confirma el producte i continua amb el següent pas de la teua comanda.</p>
+        <h2>Reserva ràpida o primer pressupost</h2>
+          <p>Si ja tens clar què vols, avança per ací. Si encara necessites orientació, passa’ns el teu cas i et preparem una proposta.</p>
       </div>
       <div class="checkout-shortcuts">
         <div class="checkout-card">
@@ -1129,7 +1372,7 @@
           </div>
           <div class="checkout-feature">
             <strong>Dades essencials</strong>
-            <span>Nom, WhatsApp, producte i qualsevol detall bàsic que vulgues compartir.</span>
+            <span>Nom, WhatsApp, producte i els detalls bàsics perquè et puguem respondre ràpid.</span>
           </div>
           <div class="checkout-feature">
             <strong>Resposta més àgil</strong>
@@ -1147,8 +1390,8 @@
     <section>
       <div class="banner">
         <div>
-          <h2>No tens clar que escollir?</h2>
-          <p>Conta'ns quin tipus de celebració tens al cap i t'ajudarem a trobar la combinació ideal segons estil, pressupost i moment.</p>
+          <h2>No saps encara què et convé més?</h2>
+          <p>Explica’ns el tipus de celebració, la idea que tens al cap i el pressupost orientatiu. Et direm què pot quedar millor sense complicar-te.</p>
         </div>
         <a class="btn btn-primary js-whatsapp-link" href="https://wa.me/34626685034?text=Hola%20Nati%2C%20necessito%20ajuda%20per%20preparar%20una%20celebracio" target="_blank" rel="noopener">Parlar per WhatsApp</a>
       </div>
@@ -1239,6 +1482,20 @@
                 <input type="email" name="email" placeholder="nom@exemple.com" />
               </label>
               <label>
+                Tipus de celebració
+                <select name="tipus_esdeveniment">
+                  <option value="">Selecciona una opció</option>
+                  <option>Comunió</option>
+                  <option>Boda</option>
+                  <option>Aniversari</option>
+                  <option>Baby shower</option>
+                  <option>Festa de 15 anys</option>
+                  <option>Festa de 18 anys</option>
+                  <option>Esdeveniment d'empresa</option>
+                  <option>Altres</option>
+                </select>
+              </label>
+              <label>
                 Tipus de servei
                 <select name="servei" required>
                   <option value="">Selecciona una opcio</option>
@@ -1269,6 +1526,10 @@
               <label>
                 Població o zona
                 <input type="text" name="zona" placeholder="Ex. Alzira" />
+              </label>
+              <label>
+                Nombre de persones
+                <input type="number" name="persones" min="1" placeholder="Ex. 25" />
               </label>
               <label>
                 Lloc
@@ -1367,13 +1628,110 @@
   <a class="whatsapp js-whatsapp-link" href="https://wa.me/34626685034?text=Hola%20Nati%2C%20vull%20informacio" target="_blank" rel="noopener">💬 Escriu per WhatsApp</a>
 
   <script>
-    const siteConfigPromise = fetch("/api/config").then((response) => response.json()).catch(() => ({}));
+    const API_BASE_URL = (() => {
+      const configuredUrl = String(window.NATI_API_BASE_URL || "").trim().replace(/\/$/, "");
+      return configuredUrl;
+    })();
+
+    function apiUrl(path) {
+      return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+    }
+
+    async function fetchJsonFrom(paths) {
+      const errors = [];
+
+      for (const path of paths) {
+        try {
+          const response = await fetch(path, { cache: "no-store" });
+          if (!response.ok) {
+            errors.push(`${path}: ${response.status}`);
+            continue;
+          }
+
+          return await response.json();
+        } catch (error) {
+          errors.push(`${path}: ${error.message}`);
+        }
+      }
+
+      throw new Error(errors.join(" | "));
+    }
+
+    async function loadSiteConfig() {
+      const staticFallback = {
+        whatsappNumber: "34626685034",
+        contactSummary: "WhatsApp · Instagram · Formulari web",
+        gaMeasurementId: "",
+        googleSiteVerification: "",
+        checkoutEnabled: false,
+        instagramPosts: [],
+        products: [],
+        staticMode: false
+      };
+
+      try {
+        const result = await fetchJsonFrom([apiUrl("/api/config")]);
+        const apiProducts = Array.isArray(result.products) ? result.products : [];
+        const products = apiProducts.length > 0
+          ? apiProducts
+          : await loadFallbackProducts().catch(() => []);
+
+        return {
+          ...staticFallback,
+          ...result,
+          products,
+          staticMode: false
+        };
+      } catch {
+        try {
+          const products = await loadFallbackProducts();
+          return {
+            ...staticFallback,
+            products: Array.isArray(products) ? products : [],
+            staticMode: true
+          };
+        } catch {
+          return {
+            ...staticFallback,
+            staticMode: true
+          };
+        }
+      }
+    }
+
+    async function loadFallbackProducts() {
+      return await fetchJsonFrom([
+        "assets/products/fallback-products.json",
+        "/assets/products/fallback-products.json"
+      ]);
+    }
+
+    async function loadLocalAssetsManifest() {
+      try {
+        return await fetchJsonFrom([
+          "assets/products/manifest.json",
+          "/assets/products/manifest.json"
+        ]);
+      } catch {
+        return {};
+      }
+    }
+
+    const siteConfigPromise = Promise.all([
+      loadSiteConfig(),
+      loadLocalAssetsManifest()
+    ]).then(([config, manifest]) => ({
+      ...config,
+      products: enrichProductsWithLocalAssets(config.products || [], manifest)
+    }));
     const form = document.getElementById("lead-form");
     const statusBox = document.getElementById("form-status");
     const submitButton = document.getElementById("submit-button");
     const checkoutForm = document.getElementById("checkout-form");
     const checkoutStatusBox = document.getElementById("checkout-status");
     const checkoutButton = document.getElementById("checkout-button");
+    const navToggle = document.getElementById("nav-toggle");
+    const navLinks = document.getElementById("nav-links");
     const checkoutProductSelect = document.getElementById("checkout-product");
     const selectedProductCard = document.getElementById("selected-product-card");
     const selectedProductImage = document.getElementById("selected-product-image");
@@ -1382,6 +1740,7 @@
     const selectedProductPrice = document.getElementById("selected-product-price");
     const productsGrid = document.getElementById("products-grid");
     const galleryGrid = document.getElementById("gallery-grid");
+    const galleryFilters = document.getElementById("gallery-filters");
     const galleryPrevButton = document.getElementById("gallery-prev");
     const galleryNextButton = document.getElementById("gallery-next");
     const instagramFeed = document.getElementById("instagram-feed");
@@ -1389,6 +1748,30 @@
     const urlParams = new URLSearchParams(window.location.search);
     const isCheckoutPage = window.location.pathname === "/checkout";
     let availableProducts = [];
+    let activeGalleryProducts = [];
+    let currentGalleryCategory = "all";
+    const staticGallerySeed = [
+      {
+        nom: "Taula dolça / candy bar",
+        categoria: "Esdeveniments",
+        imatges: [{ url: "/assets/products/taula-dolca-candy-bar-01.webp", alt: "Taula dolça per a celebració" }]
+      },
+      {
+        nom: "Decoració amb globus",
+        categoria: "Decoració",
+        imatges: [{ url: "/assets/products/globus-d-heli-personalitzats-01.jpg", alt: "Decoració amb globus" }]
+      },
+      {
+        nom: "Pastís de xuxes",
+        categoria: "Xuxes personalitzades",
+        imatges: [{ url: "/assets/products/pastis-de-xuxes-personalitzat-01.jpg", alt: "Pastís de xuxes personalitzat" }]
+      },
+      {
+        nom: "Regals i detalls",
+        categoria: "Regals",
+        imatges: [{ url: "/assets/products/regals-originals-i-detalls-03.jpg", alt: "Regals i detalls personalitzats" }]
+      }
+    ];
 
     const categoryEmoji = {
       "Taules dolces": "🍬",
@@ -1410,9 +1793,152 @@
 
     function buildReserveLabel(product) {
       const category = (product.categoria || "").toLowerCase();
-      if (category.includes("decor")) return "Reservar";
-      if (category.includes("esdeven")) return "Reservar";
-      return "Comprar / reservar";
+      if (category.includes("decor")) return "Demanar pressupost";
+      if (category.includes("esdeven")) return "Reservar la teua data";
+      if (category.includes("regals")) return "Vull aquest detall";
+      return "Comprar o reservar";
+    }
+
+    function normaliseCategory(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function getCategoryMarketingLabel(category) {
+      const normalised = normaliseCategory(category);
+      if (normalised.includes("esdeven")) return "Comunions, bodes i celebracions";
+      if (normalised.includes("decor")) return "Globus, photocall i ambientació";
+      if (normalised.includes("xuxes")) return "Detalls dolços personalitzats";
+      if (normalised.includes("regals")) return "Regals i detalls especials";
+      return category || "Proposta a mida";
+    }
+
+    function getImageCandidates(url) {
+      const value = String(url || "").trim();
+      if (!value) return [];
+      if (/^(https?:|data:|blob:)/i.test(value)) return [value];
+
+      const withoutLeadingSlash = value.replace(/^\/+/, "");
+      const withLeadingSlash = "/" + withoutLeadingSlash;
+
+      return Array.from(new Set([
+        withLeadingSlash,
+        withoutLeadingSlash
+      ]));
+    }
+
+    function getCssImageUrl(url) {
+      const candidates = getImageCandidates(url);
+      return candidates[1] || candidates[0] || "";
+    }
+
+    function imageAttrs(url) {
+      const candidates = getImageCandidates(url);
+      if (candidates.length === 0) return "";
+      return `src="${escapeHtml(candidates[0])}" data-image-candidates="${escapeHtml(candidates.join("|"))}"`;
+    }
+
+    function mediaBgStyle(url) {
+      const value = getCssImageUrl(url);
+      return value ? `--media-url:url('${escapeHtml(value)}')` : "";
+    }
+
+    function classifyGalleryCategories(imagePath, fallbackCategory = "") {
+      const value = String(imagePath || "").toLowerCase();
+
+      if (value.includes("taula-dolca-candy-bar")) return ["Esdeveniments"];
+      if (value.includes("globus-d-heli-personalitzats")) return ["Decoració"];
+      if (value.includes("pastis-de-xuxes-personalitzat")) return ["Xuxes personalitzades"];
+      if (value.includes("ram-de-xuxes")) return ["Regals i detalls"];
+      if (value.includes("regals-originals-i-detalls")) return ["Regals i detalls"];
+      if (value.includes("sorpreses-amb-bitllets")) return ["Regals i detalls"];
+
+      if (value.includes("decoracio-de-taules-detalls")) return ["Decoració", "Regals i detalls"];
+
+      return fallbackCategory ? [fallbackCategory] : [];
+    }
+
+    function getGalleryCategories(product, image) {
+      if (Array.isArray(image?.galleryCategories) && image.galleryCategories.length > 0) {
+        return image.galleryCategories;
+      }
+
+      if (image?.galleryCategory) {
+        return [image.galleryCategory];
+      }
+
+      return classifyGalleryCategories(image?.url || image?.path || image?.fullUrl || image?.alt, product?.categoria || "");
+    }
+
+    function enrichProductsWithLocalAssets(products, manifest) {
+      if (!Array.isArray(products)) return [];
+
+      return products.map((product) => {
+        const manifestEntry = manifest?.[product.id] || manifest?.[product.slug] || null;
+        const existingImages = Array.isArray(product.imatges) ? product.imatges : [];
+        const manifestImages = Array.isArray(manifestEntry?.images) ? manifestEntry.images : [];
+        const manifestByPath = new Map(manifestImages.map((image) => [
+          String(image.path || image.url || "").replace(/^\/+/, ""),
+          image
+        ]));
+        const enrichedExistingImages = existingImages.map((image) => {
+          const key = String(image.url || image.path || image.fullUrl || "").replace(/^\/+/, "");
+          const manifestImage = manifestByPath.get(key) || null;
+          return {
+            ...image,
+            alt: image.alt || manifestImage?.alt || product.nom || "Imatge del producte",
+            galleryCategories: image.galleryCategories || manifestImage?.galleryCategories || classifyGalleryCategories(key || image.alt, product.categoria)
+          };
+        });
+
+        if (!manifestEntry || !Array.isArray(manifestEntry.images)) {
+          return {
+            ...product,
+            imatges: enrichedExistingImages
+          };
+        }
+
+        const seen = new Set(enrichedExistingImages.map((image) => image.url || image.path || image.fullUrl).filter(Boolean));
+        const localImages = manifestEntry.images
+          .map((image, index) => ({
+            url: image.path || image.url || "",
+            fullUrl: image.path || image.url || "",
+            alt: image.alt || product.nom || "Imatge del producte",
+            galleryCategories: image.galleryCategories || classifyGalleryCategories(image.path || image.url || image.alt, product.categoria),
+            index: enrichedExistingImages.length + index
+          }))
+          .filter((image) => image.url && !seen.has(image.url));
+
+        return {
+          ...product,
+          imatges: [...enrichedExistingImages, ...localImages]
+        };
+      });
+    }
+
+    function attachImageFallbacks(root = document) {
+      root.querySelectorAll("img").forEach((img) => {
+        if (img.dataset.fallbackBound === "true") return;
+        img.dataset.fallbackBound = "true";
+        img.addEventListener("error", () => {
+          const candidates = (img.dataset.imageCandidates || "").split("|").filter(Boolean);
+          const currentIndex = Number(img.dataset.candidateIndex || 0);
+          const nextSrc = candidates[currentIndex + 1];
+          if (nextSrc) {
+            img.dataset.candidateIndex = String(currentIndex + 1);
+            img.src = nextSrc;
+            return;
+          }
+
+          const wrapper = img.closest(".product-image, .gallery-item, .instagram-card, .selected-product-card");
+          if (wrapper) {
+            wrapper.classList.add("image-missing");
+          }
+        });
+      });
     }
 
     function prefillLeadForm(productName) {
@@ -1427,7 +1953,22 @@
       }
 
       serviceSelect.value = productName;
-      form.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.querySelector(".form-wrap")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function prefillEventForm(eventName) {
+      const eventSelect = form.querySelector('select[name="tipus_esdeveniment"]');
+      if (eventSelect && eventName) {
+        const optionExists = Array.from(eventSelect.options).some((option) => option.value === eventName);
+        if (!optionExists) {
+          const option = document.createElement("option");
+          option.value = eventName;
+          option.textContent = eventName;
+          eventSelect.appendChild(option);
+        }
+        eventSelect.value = eventName;
+      }
+      document.querySelector(".form-wrap")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function prefillCheckout(productId) {
@@ -1459,10 +2000,10 @@
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
         name: "Nati Dolcos i Festa",
-        description: "Taules dolces, regals originals, xuxes personalitzades i decoració per a celebracions.",
+        description: "Taules dolces, candy bar, decoració amb globus, photocalls i regals personalitzats per a celebracions a Tortosa, les Terres de l'Ebre i Tarragona.",
         url: window.location.origin + "/",
         telephone: config.whatsappNumber ? `+${config.whatsappNumber}` : "+34626685034",
-        areaServed: "Comunitat Valenciana",
+        areaServed: ["Tortosa", "Terres de l'Ebre", "Tarragona", "Província de Tarragona"],
         priceRange: "EUR",
         address: {
           "@type": "PostalAddress",
@@ -1512,26 +2053,49 @@
     }
 
     const featuredInstagramPosts = [
-      "https://www.instagram.com/p/DXdvC7jjVbJ/embed/captioned/",
-      "https://www.instagram.com/p/DXM3TZdjQEJ/embed/captioned/",
-      "https://www.instagram.com/p/DWZp6daDb2-/embed/captioned/",
-      "https://www.instagram.com/p/DK7I-TeNmLj/embed/captioned/"
+      {
+        url: "https://www.instagram.com/p/DXdvC7jjVbJ/",
+        image: "/assets/products/taula-dolca-candy-bar-01.webp",
+        title: "Taula dolça i muntatge visual",
+        subtitle: "Veure publicació real a Instagram"
+      },
+      {
+        url: "https://www.instagram.com/p/DXM3TZdjQEJ/",
+        image: "/assets/products/globus-d-heli-personalitzats-01.jpg",
+        title: "Decoració amb globus i espai festiu",
+        subtitle: "Veure publicació real a Instagram"
+      },
+      {
+        url: "https://www.instagram.com/p/DWZp6daDb2-/",
+        image: "/assets/products/regals-originals-i-detalls-03.jpg",
+        title: "Detalls i regals personalitzats",
+        subtitle: "Veure publicació real a Instagram"
+      },
+      {
+        url: "https://www.instagram.com/p/DK7I-TeNmLj/?img_index=1",
+        image: "/assets/products/pastis-de-xuxes-personalitzat-01.jpg",
+        title: "Pastís de xuxes personalitzat",
+        subtitle: "Veure publicació real a Instagram"
+      }
     ];
 
     function buildInstagramFeed(posts, products) {
       if (!instagramFeed) return;
 
       if (featuredInstagramPosts.length > 0) {
-        instagramFeed.innerHTML = featuredInstagramPosts.map((embedUrl, index) => `
-          <article class="instagram-card">
-            <iframe
-              src="${escapeHtml(embedUrl)}"
-              loading="lazy"
-              allowtransparency="true"
-              allowfullscreen="true"
-              scrolling="no"
-              title="${escapeHtml(`Publicació d'Instagram ${index + 1} de Nati Dolcos i Festa`)}"></iframe>
-          </article>
+        const dynamicImages = (products || [])
+          .flatMap((product) => product.imatges || [])
+          .map((image) => image.url)
+          .filter(Boolean);
+
+        instagramFeed.innerHTML = featuredInstagramPosts.map((post, index) => `
+          <a class="instagram-card" href="${escapeHtml(post.url)}" target="_blank" rel="noopener" aria-label="${escapeHtml(post.title)}">
+            <div class="gallery-photo" style="${mediaBgStyle(dynamicImages[index] || post.image)}" role="img" aria-label="${escapeHtml(post.title)}"></div>
+            <div class="instagram-copy">
+              <strong>${escapeHtml(post.title)}</strong>
+              <span>${escapeHtml(post.subtitle)}</span>
+            </div>
+          </a>
         `).join("");
         return;
       }
@@ -1545,7 +2109,7 @@
 
       instagramFeed.innerHTML = feedImages.map(({ image, product }) => `
         <a class="instagram-card" href="https://www.instagram.com/nati_dolcos_i_festa/" target="_blank" rel="noopener" aria-label="Veure més contingut d'Instagram de ${escapeHtml(product.nom || "Nati Dolcos i Festa")}">
-          <img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.alt || product.nom || "Instagram de Nati Dolcos i Festa")}" loading="lazy" />
+          <div class="gallery-photo" style="${mediaBgStyle(image.url)}" role="img" aria-label="${escapeHtml(image.alt || product.nom || "Instagram de Nati Dolcos i Festa")}"></div>
         </a>
       `).join("");
     }
@@ -1565,7 +2129,9 @@
       selectedProductPrice.textContent = product.preuOrientatiu ? `Des de ${product.preuOrientatiu} EUR` : "Preu a consultar";
 
       if (image?.url) {
-        selectedProductImage.src = image.url;
+        selectedProductImage.src = getImageCandidates(image.url)[0] || image.url;
+        selectedProductImage.dataset.imageCandidates = getImageCandidates(image.url).join("|");
+        selectedProductImage.dataset.candidateIndex = "0";
         selectedProductImage.alt = image.alt || product.nom || "Imatge del producte";
       }
 
@@ -1596,8 +2162,100 @@
       heroImages.forEach((item) => {
         const tile = document.getElementById(item.id);
         if (tile && item.image) {
-          tile.style.backgroundImage = `url("${item.image}")`;
+          tile.style.backgroundImage = `url("${getCssImageUrl(item.image)}")`;
         }
+      });
+
+      [
+        {
+          id: "celebration-comunions",
+          image: findProductImage(products, (product) => normaliseCategory(product.categoria).includes("esdeven"))
+        },
+        {
+          id: "celebration-bodas",
+          image: findProductImage(products, (product) => normaliseCategory(product.categoria).includes("regals"))
+        },
+        {
+          id: "celebration-birthdays",
+          image: findProductImage(products, (product) => normaliseCategory(product.categoria).includes("decor"))
+        }
+      ].forEach((item) => {
+        const card = document.getElementById(item.id);
+        if (card && item.image) {
+          card.style.backgroundImage = `linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)), url("${getCssImageUrl(item.image)}")`;
+        }
+      });
+    }
+
+    function renderGallery(products) {
+      if (!galleryGrid) return;
+
+      const sourceProducts = Array.isArray(products) && products.length > 0 ? products : staticGallerySeed;
+      activeGalleryProducts = sourceProducts;
+      const galleryImages = sourceProducts
+        .flatMap((product) => (product.imatges || []).map((image) => ({
+          product,
+          image,
+          categories: getGalleryCategories(product, image)
+        })))
+        .filter(({ categories }) => {
+          if (currentGalleryCategory === "all") return true;
+          return categories.some((category) => {
+            const normalisedCategory = normaliseCategory(category);
+            if (currentGalleryCategory === "regals") return normalisedCategory.includes("regals");
+            return normalisedCategory.includes(currentGalleryCategory);
+          });
+        });
+
+      if (galleryImages.length === 0) {
+        galleryGrid.innerHTML = `
+          <article class="gallery-item">
+            <div class="gallery-item-caption">
+              <strong>Galeria en preparació</strong>
+              <span>Estem seleccionant noves imatges per a aquesta categoria.</span>
+            </div>
+          </article>
+        `;
+        updateGalleryControlsState();
+        return;
+      }
+
+      galleryGrid.innerHTML = galleryImages.map(({ product, image, categories }) => `
+        <article class="gallery-item">
+          <div class="gallery-photo" style="${mediaBgStyle(image.url)}" role="img" aria-label="${escapeHtml(image.alt || product.nom || "Galeria de productes")}"></div>
+          <div class="gallery-item-caption">
+            <strong>${escapeHtml(product.nom || "Proposta")}</strong>
+            <span>${escapeHtml(categories[0] || product.categoria || "Celebració especial")}</span>
+          </div>
+        </article>
+      `).join("");
+      updateGalleryControlsState();
+    }
+
+    function updateGalleryControlsState() {
+      const controls = galleryPrevButton?.parentElement;
+      if (!galleryGrid || !controls) return;
+
+      window.requestAnimationFrame(() => {
+        const canScroll = galleryGrid.scrollWidth > galleryGrid.clientWidth + 8;
+        controls.classList.toggle("is-hidden", !canScroll);
+      });
+    }
+
+    function wireGalleryFilters(products) {
+      if (!galleryFilters) return;
+      if (galleryFilters.dataset.wired === "true") return;
+      galleryFilters.dataset.wired = "true";
+
+      galleryFilters.addEventListener("click", (event) => {
+        const button = event.target.closest(".gallery-filter");
+        if (!button) return;
+
+        currentGalleryCategory = normaliseCategory(button.dataset.category || "all");
+        galleryFilters.querySelectorAll(".gallery-filter").forEach((item) => {
+          item.classList.toggle("active", item === button);
+        });
+        renderGallery(activeGalleryProducts.length > 0 ? activeGalleryProducts : products);
       });
     }
 
@@ -1612,6 +2270,9 @@
       galleryNextButton.addEventListener("click", () => {
         galleryGrid.scrollBy({ left: scrollAmount, behavior: "smooth" });
       });
+
+      window.addEventListener("resize", updateGalleryControlsState);
+      updateGalleryControlsState();
     }
 
     function showStatus(type, message) {
@@ -1622,6 +2283,22 @@
     function showCheckoutStatus(type, message) {
       checkoutStatusBox.textContent = message;
       checkoutStatusBox.className = "status visible " + type;
+    }
+
+    function getNetworkErrorMessage(error) {
+      const message = String(error?.message || "");
+      const isNetworkFailure = message.includes("Failed to fetch") || message.includes("NetworkError");
+
+      if (isNetworkFailure) {
+        return "No s'ha pogut contactar amb el backend de la web. Revisa que Hostinger estigui executant l'app Node i que /api/health respongui correctament.";
+      }
+
+      return message || "No hem pogut connectar amb Airtable ara mateix. Revisa la configuració del servidor.";
+    }
+
+    function buildWhatsappLeadUrl(config, payload) {
+      const text = encodeURIComponent(`Hola Nati, vull demanar pressupost.\nNom: ${payload.nom || ""}\nTelèfon: ${payload.telefon || ""}\nEmail: ${payload.email || ""}\nCelebració: ${payload.tipus_esdeveniment || ""}\nServei: ${payload.servei || ""}\nData: ${payload.data_festa || ""}\nHora: ${payload.hora || ""}\nZona: ${payload.zona || ""}\nLloc: ${payload.lloc || ""}\nPersones: ${payload.persones || ""}\nPressupost: ${payload.pressupost || ""}\nTema o colors: ${payload.tema_colors || ""}\nMissatge: ${payload.missatge || ""}`);
+      return `https://wa.me/${config.whatsappNumber || "34626685034"}?text=${text}`;
     }
 
     function setLoading(isLoading) {
@@ -1638,7 +2315,7 @@
       if (!sessionId) return;
 
       try {
-        const response = await fetch(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`);
+        const response = await fetch(apiUrl(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`));
         const result = await response.json();
         if (!response.ok) {
           throw new Error(result.error || "No s'ha pogut validar la compra.");
@@ -1672,10 +2349,11 @@
         document.getElementById("contact-line").textContent = config.contactSummary;
       }
 
+      buildInstagramFeed(config.instagramPosts, config.products && config.products.length > 0 ? config.products : staticGallerySeed);
+
       if (Array.isArray(config.products) && config.products.length > 0) {
         availableProducts = config.products;
         applyHeroImages(config.products);
-        buildInstagramFeed(config.instagramPosts, config.products);
         const productOptions = config.products.map((product) => `
           <option value="${escapeHtml(product.id)}">${escapeHtml(product.nom || "Servei")}</option>
         `).join("");
@@ -1689,24 +2367,25 @@
         productsGrid.innerHTML = config.products.map((product) => {
           const emoji = categoryEmoji[product.categoria] || "✨";
           const price = product.preuOrientatiu ? `Des de ${product.preuOrientatiu} EUR` : "A pressupost";
-          const tag = product.categoria || "A mida";
+          const tag = getCategoryMarketingLabel(product.categoria);
           const title = product.nom || "Servei";
           const description = product.descripcioCurta || "Opció personalitzable per a la teua celebració.";
           const image = product.imatges?.[0];
           const reserveLabel = config.checkoutEnabled && product.preuOrientatiu ? "Comprar ara" : buildReserveLabel(product);
+          const supportCopy = product.opcions || "Ens adaptem a la data, la temàtica, l'espai i el tipus de celebració.";
 
           return `
             <article class="product-card">
               <div class="product-image">
                 ${image
-                  ? `<img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.alt || title)}" loading="lazy" />`
+                  ? `<div class="media-bg" style="${mediaBgStyle(image.url)}" role="img" aria-label="${escapeHtml(image.alt || title)}"></div>`
                   : `<div class="product-image-fallback">${emoji}</div>`}
               </div>
               <div class="product-content">
                 <span class="tag">${escapeHtml(tag)}</span>
                 <h3>${escapeHtml(title)}</h3>
                 <p>${escapeHtml(description)}</p>
-                ${product.opcions ? `<p>${escapeHtml(product.opcions)}</p>` : ""}
+                <p>${escapeHtml(supportCopy)}</p>
                 <div class="product-meta">
                   <span class="price">${escapeHtml(price)}</span>
                   <button class="btn btn-primary js-reserve-product" type="button" data-product-id="${escapeHtml(product.id)}" data-product="${escapeHtml(title)}">${escapeHtml(reserveLabel)}</button>
@@ -1716,38 +2395,19 @@
           `;
         }).join("");
 
-        const galleryImages = config.products.flatMap((product) =>
-          (product.imatges || []).map((image) => ({
-            url: image.url,
-            alt: image.alt || product.nom || "Galeria de productes",
-            productName: product.nom || "Servei",
-            category: product.categoria || "A mida"
-          }))
-        );
-
-        if (galleryImages.length > 0) {
-          galleryGrid.innerHTML = galleryImages.map((image) => `
-            <article class="gallery-item">
-              <img src="${escapeHtml(image.url)}" alt="${escapeHtml(image.alt)}" loading="lazy" />
-              <div class="gallery-item-caption">
-                <strong>${escapeHtml(image.productName)}</strong>
-                <span>${escapeHtml(image.category)}</span>
-              </div>
-            </article>
-          `).join("");
-        } else {
-          galleryGrid.innerHTML = `
-            <article class="gallery-item">
-              <div class="gallery-item-caption">
-                <strong>Galeria en preparació</strong>
-                <span>Quan hi haja imatges actives a Airtable, apareixeran aquí automàticament.</span>
-              </div>
-            </article>
-          `;
-        }
+        renderGallery(config.products);
+        wireGalleryFilters(config.products);
+        attachImageFallbacks(productsGrid);
+        attachImageFallbacks(document.getElementById("celebracions"));
+        attachImageFallbacks(instagramFeed);
 
         productsGrid.querySelectorAll(".js-reserve-product").forEach((button) => {
           button.addEventListener("click", () => {
+            if (!config.checkoutEnabled) {
+              prefillLeadForm(button.dataset.product);
+              return;
+            }
+
             const checkoutUrl = new URL("/checkout", window.location.origin);
             checkoutUrl.searchParams.set("product", button.dataset.productId);
             checkoutUrl.searchParams.set("name", button.dataset.product);
@@ -1788,7 +2448,35 @@
       }
     });
 
+    renderGallery([]);
+    wireGalleryFilters([]);
+    attachImageFallbacks();
     wireGalleryControls();
+
+    navToggle?.addEventListener("click", () => {
+      const isOpen = navLinks?.classList.toggle("open");
+      navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+
+    navLinks?.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        navToggle?.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.querySelectorAll(".js-celebration-link").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        prefillEventForm(link.dataset.event || "");
+      });
+    });
+
+    document.querySelectorAll(".js-static-product").forEach((button) => {
+      button.addEventListener("click", () => {
+        prefillLeadForm(button.dataset.product || "");
+      });
+    });
 
     checkoutProductSelect?.addEventListener("change", (event) => {
       updateSelectedProductCard(event.target.value);
@@ -1804,7 +2492,9 @@
       const payload = Object.fromEntries(formData.entries());
 
       try {
-        const response = await fetch("/api/leads", {
+        await siteConfigPromise.catch(() => null);
+
+        const response = await fetch(apiUrl("/api/leads"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -1821,7 +2511,7 @@
         form.reset();
         showStatus("success", "Consulta enviada correctament. Nati la rebrà i et contactarà al més prompte possible.");
       } catch (error) {
-        showStatus("error", error.message || "Hi ha hagut un problema en enviar el formulari.");
+        showStatus("error", getNetworkErrorMessage(error));
       } finally {
         setLoading(false);
       }
@@ -1837,7 +2527,7 @@
       const payload = Object.fromEntries(formData.entries());
 
       try {
-        const response = await fetch("/api/checkout", {
+        const response = await fetch(apiUrl("/api/checkout"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -1860,7 +2550,7 @@
           ? "Reserva enviada correctament. Nati la revisarà i es posarà en contacte amb tu."
           : "Reserva creada correctament.");
       } catch (error) {
-        showCheckoutStatus("error", error.message || "Hi ha hagut un problema en iniciar el checkout.");
+        showCheckoutStatus("error", getNetworkErrorMessage(error));
       } finally {
         setCheckoutLoading(false);
       }
