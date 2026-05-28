@@ -683,7 +683,15 @@ const server = http.createServer(async (request, response) => {
   if (request.method === "GET" && requestUrl.pathname === "/api/config") {
     try {
       const products = await fetchProductsFromAirtable();
-      const gallery = await fetchGalleryFromAirtable();
+      let gallery = [];
+      let galleryWarning = "";
+
+      try {
+        gallery = await fetchGalleryFromAirtable();
+      } catch (galleryError) {
+        galleryWarning = galleryError.message || "No s'ha pogut carregar la galeria d'Airtable.";
+      }
+
       const instagramPosts = await fetchInstagramPosts(products);
       sendJson(response, 200, {
         whatsappNumber: process.env.WHATSAPP_NUMBER || "",
@@ -694,7 +702,8 @@ const server = http.createServer(async (request, response) => {
         instagramPosts,
         checkoutEnabled: isStripeConfigured(),
         gallery,
-        products
+        products,
+        galleryWarning
       });
     } catch (error) {
       sendJson(response, 200, {

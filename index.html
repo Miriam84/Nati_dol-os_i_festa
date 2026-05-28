@@ -1043,11 +1043,23 @@
     body.checkout-page #serveis,
     body.checkout-page #botiga,
     body.checkout-page #galeria,
+    body.checkout-page #xarxes,
     body.checkout-page .banner,
     body.checkout-page #com-funciona,
     body.checkout-page #contacte,
     body.checkout-page .whatsapp {
       display: none;
+    }
+
+    body.checkout-page main > section {
+      display: none;
+      order: 10;
+    }
+
+    body.checkout-page #checkout,
+    body.checkout-page #celebracions,
+    body.checkout-page #faq {
+      display: block;
     }
 
     body.checkout-page .topbar {
@@ -1064,6 +1076,21 @@
     body.checkout-page #checkout {
       padding-top: 32px;
       min-height: calc(100vh - 110px);
+      order: 1;
+    }
+
+    body.checkout-page main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.checkout-page #celebracions {
+      order: 2;
+      padding-top: 40px;
+    }
+
+    body.checkout-page #faq {
+      order: 3;
     }
 
     body.checkout-page .section-head {
@@ -1441,10 +1468,10 @@
       <div class="gallery-shell">
         <div class="gallery-filters" id="gallery-filters">
           <button class="gallery-filter active" type="button" data-category="all">Totes</button>
-          <button class="gallery-filter" type="button" data-category="esdeveniments">Taules dolces</button>
-          <button class="gallery-filter" type="button" data-category="decoració">Globus i decoració</button>
-          <button class="gallery-filter" type="button" data-category="xuxes personalitzades">Pastissos de xuxes</button>
-          <button class="gallery-filter" type="button" data-category="regals">Regals i detalls</button>
+          <button class="gallery-filter" type="button" data-category="taules dolces">Taules dolces</button>
+          <button class="gallery-filter" type="button" data-category="globus i decoració">Globus i decoració</button>
+          <button class="gallery-filter" type="button" data-category="pastissos de xuxes">Pastissos de xuxes</button>
+          <button class="gallery-filter" type="button" data-category="regals i detalls">Regals i detalls</button>
         </div>
         <div class="gallery" id="gallery-grid">
           <article class="gallery-item">
@@ -1495,7 +1522,7 @@
     <section id="checkout">
       <div class="section-head">
         <h2>Reserva ràpida o primer pressupost</h2>
-          <p>Si ja tens clar què vols, avança per ací. Si encara necessites orientació, passa’ns el teu cas i et preparem una proposta.</p>
+          <p>Si ja tens clar què vols, avança per aquí. Si encara necessites orientació, passa’ns el teu cas i et preparem una proposta.</p>
       </div>
       <div class="checkout-shortcuts">
         <div class="checkout-card">
@@ -1544,7 +1571,7 @@
         <div class="checkout-highlight">
           <div class="form-info">
             <h2>Una reserva clara, ràpida i còmoda</h2>
-            <p>Estem ací per posar-t'ho fàcil. Si ja saps quin producte vols, aquest pas et permet avançar de manera ràpida i ordenada.</p>
+            <p>Estem aquí per posar-t'ho fàcil. Si ja saps quin producte vols, aquest pas et permet avançar de manera ràpida i ordenada.</p>
           </div>
           <div class="checkout-feature">
             <strong>Dades essencials</strong>
@@ -1737,7 +1764,7 @@
       </div>
     </section>
 
-    <section>
+    <section id="faq">
       <div class="section-head">
         <h2>Preguntes freqüents</h2>
       </div>
@@ -2074,6 +2101,22 @@
       }
 
       return classifyGalleryCategories(image?.url || image?.path || image?.fullUrl || image?.alt, product?.categoria || "");
+    }
+
+    function categoryMatchesFilter(category, filter) {
+      if (filter === "all") return true;
+
+      const normalisedCategory = normaliseCategory(category);
+      const normalisedFilter = normaliseCategory(filter);
+      const aliases = {
+        "taules dolces": ["taula dolca", "taules dolces", "candy bar", "sweet", "esdeveniments", "comunions", "bodes"],
+        "globus i decoracio": ["globus", "decoracio", "photocall", "ambientacio"],
+        "pastissos de xuxes": ["pastis", "pastissos", "xuxes personalitzades", "xuxes"],
+        "regals i detalls": ["regals", "detalls", "ram", "sorpreses"]
+      };
+
+      const validAliases = aliases[normalisedFilter] || [normalisedFilter];
+      return validAliases.some((alias) => normalisedCategory.includes(alias));
     }
 
     function buildGallerySources(config) {
@@ -2420,11 +2463,7 @@
         })))
         .filter(({ categories }) => {
           if (currentGalleryCategory === "all") return true;
-          return categories.some((category) => {
-            const normalisedCategory = normaliseCategory(category);
-            if (currentGalleryCategory === "regals") return normalisedCategory.includes("regals");
-            return normalisedCategory.includes(currentGalleryCategory);
-          });
+          return categories.some((category) => categoryMatchesFilter(category, currentGalleryCategory));
         });
       const visibleImages = galleryExpanded ? galleryImages : galleryImages.slice(0, galleryInitialLimit);
 
@@ -2444,7 +2483,7 @@
       }
 
       galleryGrid.innerHTML = visibleImages.map(({ product, image, categories }, index) => `
-        <button class="gallery-item js-gallery-open" type="button" style="animation-delay:${Math.min(index * 35, 280)}ms" data-image="${escapeHtml(getCssImageUrl(image.url))}" data-title="${escapeHtml(product.nom || "Proposta")}" data-category="${escapeHtml(categories[0] || product.categoria || "Celebració especial")}">
+        <button class="gallery-item js-gallery-open" type="button" style="animation-delay:${Math.min(index * 35, 280)}ms" data-image="${escapeHtml(getCssImageUrl(image.fullUrl || image.url))}" data-title="${escapeHtml(product.nom || "Proposta")}" data-category="${escapeHtml(categories[0] || product.categoria || "Celebració especial")}">
           <div class="gallery-photo" style="${mediaBgStyle(image.url)}" role="img" aria-label="${escapeHtml(image.alt || product.nom || "Galeria de productes")}"></div>
           <div class="gallery-item-caption">
             <strong>${escapeHtml(product.nom || "Proposta")}</strong>
