@@ -72,6 +72,14 @@ function isStripeConfigured() {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
 
+function isGalleryConfigured() {
+  return Boolean(
+    process.env.AIRTABLE_TOKEN &&
+    process.env.AIRTABLE_BASE_ID &&
+    process.env.AIRTABLE_GALLERY_TABLE_ID
+  );
+}
+
 async function parseJsonBody(request) {
   const chunks = [];
 
@@ -222,9 +230,11 @@ function buildSafeAirtableFields(payload) {
 
 function buildQuickLeadPayload(payload, product) {
   const pieces = [
-    "Checkout curt iniciat des de la web.",
+    "Reserva o compra iniciada des de la pàgina de producte.",
+    product.categoria ? `Categoria: ${product.categoria}` : "",
+    product.preuOrientatiu ? `Preu orientatiu: ${product.preuOrientatiu} EUR` : "",
     payload.quantitat ? `Quantitat: ${payload.quantitat}` : "",
-    payload.notes ? `Notes: ${payload.notes}` : "",
+    payload.notes ? `Notes de la comanda: ${payload.notes}` : "",
     payload.checkoutSessionId ? `Stripe session: ${payload.checkoutSessionId}` : "",
     payload.paymentStatus ? `Estat pagament: ${payload.paymentStatus}` : ""
   ].filter(Boolean);
@@ -232,6 +242,7 @@ function buildQuickLeadPayload(payload, product) {
   return {
     nom: payload.nom,
     telefon: payload.telefon,
+    email: payload.email,
     servei: product.nom,
     missatge: pieces.join("\n")
   };
@@ -356,6 +367,65 @@ async function fetchProductsFromAirtable() {
         imatges: localImages.length > 0 ? localImages : remoteImages
       };
     });
+}
+
+function getAirtableSelectValue(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => item?.name || item).filter(Boolean).join(", ");
+  }
+
+  return value?.name || value || "";
+}
+
+async function fetchGalleryFromAirtable() {
+  if (!isGalleryConfigured()) return [];
+
+  const baseId = process.env.AIRTABLE_BASE_ID;
+  const tableId = process.env.AIRTABLE_GALLERY_TABLE_ID;
+  const token = process.env.AIRTABLE_TOKEN;
+
+  const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result?.error?.message || "No s'ha pogut llegir la galeria d'Airtable.");
+  }
+
+  return (result.records || [])
+    .filter((record) => {
+      const fieldsRecord = record.fields || {};
+      return fieldsRecord["Actiu"] !== false;
+    })
+    .sort((a, b) => Number(a.fields?.Ordre || 9999) - Number(b.fields?.Ordre || 9999))
+    .map((record) => {
+      const fieldsRecord = record.fields || {};
+      const title = fieldsRecord.Nom || fieldsRecord.Titol || fieldsRecord["Títol"] || "Galeria de Nati";
+      const category = getAirtableSelectValue(fieldsRecord.Categoria) || "Altres";
+      const attachments = fieldsRecord.Imatges || fieldsRecord.Fotos || fieldsRecord.Foto || fieldsRecord.Imatge || [];
+
+      return {
+        id: record.id,
+        nom: title,
+        slug: slugify(title || record.id),
+        categoria: category,
+        descripcioCurta: fieldsRecord.Descripcio || fieldsRecord["Descripció"] || "",
+        source: "airtable-gallery",
+        imatges: Array.isArray(attachments)
+          ? attachments.map((image, index) => ({
+              url: image.thumbnails?.large?.url || image.url || "",
+              fullUrl: image.url || "",
+              alt: image.filename || title || "Imatge de galeria",
+              galleryCategories: [category],
+              index
+            })).filter((image) => image.url)
+          : []
+      };
+    })
+    .filter((item) => item.imatges.length > 0);
 }
 
 async function fetchProductById(productId) {
@@ -613,6 +683,7 @@ const server = http.createServer(async (request, response) => {
   if (request.method === "GET" && requestUrl.pathname === "/api/config") {
     try {
       const products = await fetchProductsFromAirtable();
+      const gallery = await fetchGalleryFromAirtable();
       const instagramPosts = await fetchInstagramPosts(products);
       sendJson(response, 200, {
         whatsappNumber: process.env.WHATSAPP_NUMBER || "",
@@ -622,6 +693,7 @@ const server = http.createServer(async (request, response) => {
         instagramUsername: getInstagramUsername(),
         instagramPosts,
         checkoutEnabled: isStripeConfigured(),
+        gallery,
         products
       });
     } catch (error) {
@@ -633,6 +705,7 @@ const server = http.createServer(async (request, response) => {
         gaMeasurementId: process.env.GA_MEASUREMENT_ID || "",
         googleSiteVerification: process.env.GOOGLE_SITE_VERIFICATION || "",
         checkoutEnabled: isStripeConfigured(),
+        gallery: [],
         products: [],
         warning: error.message || "No s'ha pogut carregar el cataleg."
       });
@@ -645,6 +718,7 @@ const server = http.createServer(async (request, response) => {
       ok: true,
       airtableConfigured: isConfigured(),
       stripeConfigured: isStripeConfigured(),
+      galleryConfigured: isGalleryConfigured(),
       siteUrl: buildPublicUrl(request)
     });
     return;
@@ -736,6 +810,7 @@ const server = http.createServer(async (request, response) => {
             {
               nom: body.nom,
               telefon: body.telefon,
+              email: body.email,
               quantitat: body.quantitat,
               notes: body.notes,
               paymentStatus: "lead-only"
@@ -743,11 +818,12 @@ const server = http.createServer(async (request, response) => {
             product
           )
         );
+        const recordId = leadOnlyResponse.records?.[0]?.id || null;
 
         sendJson(response, 201, {
           ok: true,
           leadOnly: true,
-          id: leadOnlyResponse.records?.[0]?.id || null
+          id: recordId
         });
         return;
       }
@@ -763,6 +839,7 @@ const server = http.createServer(async (request, response) => {
           {
             nom: body.nom,
             telefon: body.telefon,
+            email: body.email,
             quantitat: body.quantitat,
             notes: body.notes,
             checkoutSessionId: session.id,

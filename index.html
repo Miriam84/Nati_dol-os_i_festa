@@ -124,14 +124,11 @@
     }
 
     .logo-mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--pink), var(--gold));
-      display: grid;
-      place-items: center;
-      color: white;
-      font-weight: 900;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 10px 24px rgba(75,47,47,.12);
     }
 
     .nav-links {
@@ -1259,7 +1256,7 @@
 
   <header class="nav">
     <a class="logo" href="#inici" aria-label="Nati Dolcos i Festa">
-      <span class="logo-mark">N</span>
+      <img class="logo-mark" src="/assets/favicon.svg" alt="" width="44" height="44" />
       <span>Nati Dolcos i Festa</span>
     </a>
     <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menú</button>
@@ -1526,6 +1523,10 @@
             <label>
               Telefon / WhatsApp
               <input type="tel" name="telefon" placeholder="Ex. 600 000 000" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" placeholder="nom@exemple.com" />
             </label>
             <label>
               Quantitat
@@ -1852,6 +1853,7 @@
         googleSiteVerification: "",
         checkoutEnabled: false,
         instagramPosts: [],
+        gallery: [],
         products: [],
         staticMode: false
       };
@@ -1867,6 +1869,7 @@
           ...staticFallback,
           ...result,
           products,
+          gallery: Array.isArray(result.gallery) ? result.gallery : [],
           staticMode: false
         };
       } catch {
@@ -1875,6 +1878,7 @@
           return {
             ...staticFallback,
             products: Array.isArray(products) ? products : [],
+            gallery: [],
             staticMode: true
           };
         } catch {
@@ -1909,7 +1913,8 @@
       loadLocalAssetsManifest()
     ]).then(([config, manifest]) => ({
       ...config,
-      products: enrichProductsWithLocalAssets(config.products || [], manifest)
+      products: enrichProductsWithLocalAssets(config.products || [], manifest),
+      gallery: Array.isArray(config.gallery) ? config.gallery : []
     }));
     const form = document.getElementById("lead-form");
     const statusBox = document.getElementById("form-status");
@@ -1941,7 +1946,8 @@
     const instagramFeed = document.getElementById("instagram-feed");
     const serviceSelect = form.querySelector('select[name="servei"]');
     const urlParams = new URLSearchParams(window.location.search);
-    const isCheckoutPage = window.location.pathname === "/checkout";
+    const isFilePreview = window.location.protocol === "file:";
+    const isCheckoutPage = window.location.pathname === "/checkout" || urlParams.get("route") === "checkout";
     let availableProducts = [];
     let activeGalleryProducts = [];
     let currentGalleryCategory = "all";
@@ -2070,6 +2076,13 @@
       return classifyGalleryCategories(image?.url || image?.path || image?.fullUrl || image?.alt, product?.categoria || "");
     }
 
+    function buildGallerySources(config) {
+      return [
+        ...(Array.isArray(config.gallery) ? config.gallery : []),
+        ...(Array.isArray(config.products) ? config.products : [])
+      ];
+    }
+
     function enrichProductsWithLocalAssets(products, manifest) {
       if (!Array.isArray(products)) return [];
 
@@ -2151,6 +2164,16 @@
 
       serviceSelect.value = productName;
       document.querySelector(".form-wrap")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function openProductCheckout({ productId = "", productName = "" } = {}) {
+      const checkoutUrl = isFilePreview
+        ? new URL(window.location.href)
+        : new URL("/checkout", window.location.origin);
+      if (isFilePreview) checkoutUrl.searchParams.set("route", "checkout");
+      if (productId) checkoutUrl.searchParams.set("product", productId);
+      if (productName) checkoutUrl.searchParams.set("name", productName);
+      window.open(checkoutUrl.toString(), "_blank", "noopener");
     }
 
     function prefillEventForm(eventName) {
@@ -2613,7 +2636,7 @@
 
     function setCheckoutLoading(isLoading) {
       checkoutButton.disabled = isLoading;
-      checkoutButton.textContent = isLoading ? "Preparant checkout..." : "Continuar al checkout";
+      checkoutButton.textContent = isLoading ? "Preparant la reserva..." : "Enviar reserva";
     }
 
     async function loadCheckoutSuccess(sessionId) {
@@ -2666,6 +2689,7 @@
       }
 
       buildInstagramFeed(config.instagramPosts, config.products && config.products.length > 0 ? config.products : staticGallerySeed);
+      const gallerySources = buildGallerySources(config);
 
       if (Array.isArray(config.products) && config.products.length > 0) {
         availableProducts = config.products;
@@ -2711,8 +2735,8 @@
           `;
         }).join("");
 
-        renderGallery(config.products);
-        wireGalleryFilters(config.products);
+        renderGallery(gallerySources);
+        wireGalleryFilters(gallerySources);
         attachImageFallbacks(productsGrid);
         attachImageFallbacks(document.getElementById("celebracions"));
         attachImageFallbacks(instagramFeed);
@@ -2724,15 +2748,10 @@
               product_id: button.dataset.productId || ""
             });
 
-            if (!config.checkoutEnabled) {
-              prefillLeadForm(button.dataset.product);
-              return;
-            }
-
-            const checkoutUrl = new URL("/checkout", window.location.origin);
-            checkoutUrl.searchParams.set("product", button.dataset.productId);
-            checkoutUrl.searchParams.set("name", button.dataset.product);
-            window.open(checkoutUrl.toString(), "_blank", "noopener");
+            openProductCheckout({
+              productId: button.dataset.productId,
+              productName: button.dataset.product
+            });
           });
         });
 
@@ -2752,12 +2771,13 @@
         }
       }
 
-      if (config.warning) {
-        showCheckoutStatus("error", config.warning);
+      if ((!Array.isArray(config.products) || config.products.length === 0) && gallerySources.length > 0) {
+        renderGallery(gallerySources);
+        wireGalleryFilters(gallerySources);
       }
 
-      if (!config.checkoutEnabled) {
-        checkoutStatusBox.className = "status";
+      if (config.warning) {
+        showCheckoutStatus("error", config.warning);
       }
 
       if (urlParams.get("checkout") === "success") {
@@ -2820,7 +2840,9 @@
         trackEvent("product_cta_click", {
           item_name: button.dataset.product || ""
         });
-        prefillLeadForm(button.dataset.product || "");
+        openProductCheckout({
+          productName: button.dataset.product || ""
+        });
       });
     });
 
