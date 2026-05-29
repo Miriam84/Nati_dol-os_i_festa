@@ -152,7 +152,7 @@ function buildProductPageHtml({ product, products, request }) {
   const imageUrl = decoratedImage?.stableUrl || "";
   const title = `${product.nom} | Nati Dolços i Festa a Tortosa i Tarragona`;
   const description = product.descripcioCurta
-    || `${product.nom} personalitzat per a celebracions a Tortosa, les Terres de l'Ebre i la província de Tarragona.`;
+    || `${product.nom} personalitzat per a celebracions a Tortosa, les Terres de l'Ebre i la província de Tarragona. En alguns casos també es pot preparar com a kit DIY amb enviament a Espanya.`;
   const price = Number(product.preuOrientatiu || 0);
   const checkoutUrl = `${siteUrl}/checkout?product=${encodeURIComponent(product.id)}&name=${encodeURIComponent(product.nom)}`;
   const whatsappText = encodeURIComponent(`Hola Nati, vull informació sobre ${product.nom}.`);
@@ -168,7 +168,7 @@ function buildProductPageHtml({ product, products, request }) {
     image: imageUrl ? [imageUrl] : undefined,
     url: productUrl,
     category: product.categoria || undefined,
-    areaServed: ["Tortosa", "Terres de l'Ebre", "Província de Tarragona"],
+    areaServed: ["Tortosa", "Terres de l'Ebre", "Província de Tarragona", "Espanya"],
     brand: {
       "@type": "Brand",
       name: "Nati Dolços i Festa"
@@ -239,6 +239,7 @@ function buildProductPageHtml({ product, products, request }) {
           <span class="tag">Tortosa</span>
           <span class="tag">Terres de l'Ebre</span>
           <span class="tag">Tarragona</span>
+          <span class="tag">Kits DIY a Espanya</span>
           <span class="price">${price ? `Des de ${escapeHtml(price)} EUR` : "A pressupost"}</span>
         </div>
         <div class="actions">
@@ -250,7 +251,7 @@ function buildProductPageHtml({ product, products, request }) {
         ${imageUrl ? `<img src="${escapeHtmlAttribute(imageUrl)}" alt="${escapeHtmlAttribute(decoratedImage?.seoAlt || product.nom)}" />` : ""}
         <div class="content">
           <strong>Servei local i personalitzat</strong>
-          <p>Preparem cada proposta segons la data, l'espai, la temàtica, els colors i el tipus de celebració.</p>
+          <p>Preparem cada proposta segons la data, l'espai, la temàtica, els colors i el tipus de celebració. A Tarragona podem fer muntatge presencial; fora de zona podem preparar kits DIY amb material i instruccions.</p>
         </div>
       </article>
     </section>
@@ -271,7 +272,7 @@ const galleryCategoryPages = [
     slug: "taules-dolces",
     label: "Taules dolces",
     title: "Fotos de taules dolces i candy bar a Tortosa i Tarragona",
-    description: "Galeria de taules dolces, candy bar i muntatges per a comunions, bodes, bateigs, aniversaris i celebracions a Tortosa, les Terres de l'Ebre i Tarragona.",
+    description: "Galeria de taules dolces, candy bar i muntatges per a comunions, bodes, bateigs, aniversaris i celebracions a Tortosa, les Terres de l'Ebre i Tarragona. També podem preparar kits DIY de taula dolça amb enviament a Espanya.",
     aliases: ["taula dolca", "taules dolces", "candy bar", "sweet", "esdeveniments", "comunions", "bodes"]
   },
   {
@@ -475,7 +476,7 @@ async function buildGalleryPageHtml({ categoryConfig, request }) {
     <a class="btn" href="/#contacte">Demanar pressupost</a>
   </header>
   <main>
-    <span>${escapeHtml(categoryConfig.label)} · Tortosa · Terres de l'Ebre · Tarragona</span>
+    <span>${escapeHtml(categoryConfig.label)} · Tortosa · Terres de l'Ebre · Tarragona · Kits DIY a Espanya</span>
     <h1>${escapeHtml(categoryConfig.title)}</h1>
     <p>${escapeHtml(categoryConfig.description)}</p>
     <nav class="filters" aria-label="Categories de galeria">
@@ -1183,12 +1184,13 @@ const server = http.createServer({ maxHeaderSize: MAX_HEADER_SIZE }, async (requ
     sendText(response, 200, [
       "# Nati Dolços i Festa",
       "",
-      "Nati Dolços i Festa és un negoci local de Tortosa especialitzat en taules dolces, candy bar, decoració amb globus, photocalls, pastissos de xuxes, rams de xuxes, regals personalitzats i muntatges per a celebracions.",
+      "Nati Dolços i Festa és un negoci local de Tortosa especialitzat en taules dolces, candy bar, decoració amb globus, photocalls, pastissos de xuxes, rams de xuxes, regals personalitzats i muntatges per a celebracions. També prepara kits DIY de taules dolces amb material i instruccions per enviar a Espanya.",
       "",
-      "Àrea de servei: Tortosa, Terres de l'Ebre i província de Tarragona.",
+      "Àrea de servei: muntatges presencials a Tortosa, Terres de l'Ebre i província de Tarragona. Kits DIY i determinats detalls amb enviament a Espanya.",
       "",
       "Serveis principals:",
       "- Taules dolces i candy bar per a comunions, bodes, bateigs, aniversaris i baby showers.",
+      "- Kits DIY de taules dolces per a clients de fora de Tarragona, amb material preparat i instruccions de muntatge.",
       "- Decoració amb globus, arcs, garlandes, photocalls i ambientació d'espais.",
       "- Pastissos de xuxes, rams de xuxes i detalls dolços personalitzats.",
       "- Regals originals i sorpreses amb bitllets.",
