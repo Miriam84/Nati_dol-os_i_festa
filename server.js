@@ -972,6 +972,29 @@ function buildPublicUrl(request) {
   return `${protocol}://${host}`.replace(/\/$/, "");
 }
 
+function shouldRedirectToCanonical(request) {
+  if (!process.env.SITE_URL) return "";
+
+  const canonicalUrl = new URL(process.env.SITE_URL.replace(/\/$/, ""));
+  const forwardedHost = request.headers["x-forwarded-host"];
+  const requestHost = String(Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost || request.headers.host || "").split(":")[0].toLowerCase();
+  const canonicalHost = canonicalUrl.hostname.toLowerCase();
+
+  if (!requestHost || requestHost === "localhost" || requestHost === "127.0.0.1") {
+    return "";
+  }
+
+  const isSameDomain = requestHost === canonicalHost || requestHost === canonicalHost.replace(/^www\./, "") || `www.${requestHost}` === canonicalHost;
+  if (!isSameDomain || requestHost === canonicalHost) {
+    return "";
+  }
+
+  const redirectUrl = new URL(request.url || "/", canonicalUrl);
+  redirectUrl.protocol = canonicalUrl.protocol;
+  redirectUrl.host = canonicalUrl.host;
+  return redirectUrl.toString();
+}
+
 async function createStripeCheckoutSession({ requestUrl, product, payload }) {
   const params = new URLSearchParams();
   const siteUrl = buildSiteUrl(requestUrl);
@@ -1046,6 +1069,16 @@ function serveStaticAsset(requestUrl, response) {
 
 const server = http.createServer({ maxHeaderSize: MAX_HEADER_SIZE }, async (request, response) => {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
+  const canonicalRedirect = shouldRedirectToCanonical(request);
+
+  if (canonicalRedirect) {
+    response.writeHead(301, {
+      Location: canonicalRedirect,
+      "Cache-Control": "public, max-age=3600"
+    });
+    response.end();
+    return;
+  }
 
   if (request.method === "OPTIONS") {
     response.writeHead(204, {

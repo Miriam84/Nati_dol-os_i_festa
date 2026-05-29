@@ -2290,16 +2290,22 @@
           "https://www.instagram.com/nati_dolcos_i_festa/",
           "https://www.facebook.com/p/Nati-dol%C3%A7osfesta-100053175145112/"
         ],
-        makesOffer: (config.products || []).slice(0, 8).map((product) => ({
+        makesOffer: (config.products || []).slice(0, 8).map((product) => {
+          const price = Number(product.preuOrientatiu || 0);
+          return {
           "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: product.nom || "Producte",
-            description: product.descripcioCurta || ""
-          },
           priceCurrency: "EUR",
-          price: product.preuOrientatiu || undefined
-        }))
+          price: price || 0,
+          availability: "https://schema.org/InStock",
+          itemOffered: {
+            "@type": "Service",
+            name: product.nom || "Producte",
+            description: product.descripcioCurta || "",
+            category: product.categoria || undefined,
+            areaServed: ["Tortosa", "Terres de l'Ebre", "Província de Tarragona"]
+          }
+        };
+        })
       };
 
       dataNode.textContent = JSON.stringify(data);
