@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const PORT = Number(process.env.PORT || 3000);
+const MAX_HEADER_SIZE = Number(process.env.MAX_HEADER_SIZE || 65536);
 const ROOT = __dirname;
 const INDEX_PATH = path.join(ROOT, "index.html");
 const ENV_PATH = path.join(ROOT, ".env");
@@ -49,6 +50,451 @@ function sendHtml(response, statusCode, html) {
     "Cache-Control": "no-store"
   });
   response.end(html);
+}
+
+function escapeHtmlAttribute(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function escapeHtml(value) {
+  return escapeHtmlAttribute(value).replaceAll("'", "&#39;");
+}
+
+function absoluteUrl(siteUrl, url) {
+  const value = String(url || "").trim();
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  return `${siteUrl}/${value.replace(/^\/+/, "")}`;
+}
+
+function getImageExtension(url, fallback = "jpg") {
+  const cleanUrl = String(url || "").split("?")[0];
+  const extension = path.extname(cleanUrl).replace(".", "").toLowerCase();
+  if (["jpg", "jpeg", "png", "webp", "gif", "svg"].includes(extension)) {
+    return extension === "jpeg" ? "jpg" : extension;
+  }
+  return fallback;
+}
+
+function getCategorySlugFromLabel(category) {
+  const normalised = normaliseText(category);
+  const match = galleryCategoryPages.find((item) => matchesGalleryCategory(normalised, item));
+  return match?.slug || slugify(category || "galeria");
+}
+
+function buildImageSeoAlt({ item, image, categoryLabel }) {
+  const base = image?.alt && !/^image|img|foto|whatsapp/i.test(image.alt)
+    ? image.alt
+    : item?.nom || categoryLabel || "Imatge de Nati Dolços i Festa";
+  const category = categoryLabel || item?.categoria || "celebració";
+  return `${base} - ${category} a Tortosa, les Terres de l'Ebre i Tarragona`;
+}
+
+function buildStableImagePath({ item, image, categoryLabel, index }) {
+  const categorySlug = getCategorySlugFromLabel(categoryLabel || item?.categoria || "galeria");
+  const itemSlug = slugify(item?.nom || categoryLabel || "imatge");
+  const extension = getImageExtension(image?.filename || image?.fullUrl || image?.url || "", "webp");
+  return `/imatges/${categorySlug}/${itemSlug}-${String(index + 1).padStart(2, "0")}.${extension}`;
+}
+
+function decorateImageForSeo({ item, image, categoryLabel, index, siteUrl }) {
+  const stablePath = buildStableImagePath({ item, image, categoryLabel, index });
+  return {
+    ...image,
+    seoAlt: buildImageSeoAlt({ item, image, categoryLabel }),
+    stablePath,
+    stableUrl: `${siteUrl}${stablePath}`
+  };
+}
+
+function buildPageHtml(html, request, pathname) {
+  const siteUrl = buildPublicUrl(request);
+  const canonicalUrl = `${siteUrl}${pathname === "/checkout" ? "/checkout" : "/"}`;
+  const robotsContent = pathname === "/checkout"
+    ? "noindex,follow"
+    : "index,follow,max-image-preview:large";
+  const verificationCode = process.env.GOOGLE_SITE_VERIFICATION || "";
+
+  return html
+    .replace(
+      /<meta name="robots" content="[^"]*" \/>/,
+      `<meta name="robots" content="${robotsContent}" />`
+    )
+    .replace(
+      /<link rel="canonical" href="[^"]*" id="canonical-link" \/>/,
+      `<link rel="canonical" href="${escapeHtmlAttribute(canonicalUrl)}" id="canonical-link" />`
+    )
+    .replace(
+      /<meta property="og:url" content="[^"]*" id="og-url" \/>/,
+      `<meta property="og:url" content="${escapeHtmlAttribute(canonicalUrl)}" id="og-url" />`
+    )
+    .replace(
+      /<meta name="google-site-verification" content="[^"]*" id="google-site-verification" \/>/,
+      `<meta name="google-site-verification" content="${escapeHtmlAttribute(verificationCode)}" id="google-site-verification" />`
+    );
+}
+
+function buildProductPageHtml({ product, products, request }) {
+  const siteUrl = buildPublicUrl(request);
+  const productUrl = `${siteUrl}/producte/${encodeURIComponent(product.slug)}`;
+  const image = product.imatges?.[0] || null;
+  const decoratedImage = image ? decorateImageForSeo({
+    item: product,
+    image,
+    categoryLabel: product.categoria || "Producte",
+    index: 0,
+    siteUrl
+  }) : null;
+  const imageUrl = decoratedImage?.stableUrl || "";
+  const title = `${product.nom} | Nati Dolços i Festa a Tortosa i Tarragona`;
+  const description = product.descripcioCurta
+    || `${product.nom} personalitzat per a celebracions a Tortosa, les Terres de l'Ebre i la província de Tarragona.`;
+  const price = Number(product.preuOrientatiu || 0);
+  const checkoutUrl = `${siteUrl}/checkout?product=${encodeURIComponent(product.id)}&name=${encodeURIComponent(product.nom)}`;
+  const whatsappText = encodeURIComponent(`Hola Nati, vull informació sobre ${product.nom}.`);
+  const whatsappUrl = `https://wa.me/${process.env.WHATSAPP_NUMBER || "34626685034"}?text=${whatsappText}`;
+  const relatedProducts = products
+    .filter((item) => item.id !== product.id)
+    .slice(0, 4);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": price ? "Product" : "Service",
+    name: product.nom,
+    description,
+    image: imageUrl ? [imageUrl] : undefined,
+    url: productUrl,
+    category: product.categoria || undefined,
+    areaServed: ["Tortosa", "Terres de l'Ebre", "Província de Tarragona"],
+    brand: {
+      "@type": "Brand",
+      name: "Nati Dolços i Festa"
+    },
+    offers: price ? {
+      "@type": "Offer",
+      priceCurrency: "EUR",
+      price,
+      availability: "https://schema.org/InStock",
+      url: checkoutUrl
+    } : undefined,
+    provider: {
+      "@type": "LocalBusiness",
+      name: "Nati Dolços i Festa",
+      telephone: `+${process.env.WHATSAPP_NUMBER || "34626685034"}`,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Carrer de Verges Pauli, 18",
+        addressLocality: "Tortosa",
+        addressRegion: "Tarragona",
+        postalCode: "43500",
+        addressCountry: "ES"
+      }
+    }
+  };
+
+  return `<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(title)}</title>
+  <meta name="description" content="${escapeHtmlAttribute(description)}" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="${escapeHtmlAttribute(productUrl)}" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="product" />
+  <meta property="og:title" content="${escapeHtmlAttribute(title)}" />
+  <meta property="og:description" content="${escapeHtmlAttribute(description)}" />
+  <meta property="og:url" content="${escapeHtmlAttribute(productUrl)}" />
+  ${imageUrl ? `<meta property="og:image" content="${escapeHtmlAttribute(imageUrl)}" />` : ""}
+  <meta name="google-site-verification" content="${escapeHtmlAttribute(process.env.GOOGLE_SITE_VERIFICATION || "")}" />
+  <script type="application/ld+json">${JSON.stringify(structuredData).replace(/</g, "\\u003c")}</script>
+  <style>
+    :root{--pink:#e95b83;--cream:#fff7ef;--choco:#4b2f2f;--muted:#7a6767;--gold:#d8a657;--mint:#b9ead7;--white:#fff;--shadow:0 18px 45px rgba(75,47,47,.12)}
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--choco);background:linear-gradient(135deg,#fff7ef,#fff)}
+    a{color:inherit}.nav{max-width:1180px;margin:0 auto;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:900;font-size:24px}.logo img{width:46px;height:46px;border-radius:14px;box-shadow:var(--shadow)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:15px 24px;text-decoration:none;font-weight:900;border:0}.primary{background:var(--pink);color:white;box-shadow:0 16px 34px rgba(233,91,131,.25)}.secondary{background:white;border:1px solid rgba(75,47,47,.14)}
+    main{max-width:1180px;margin:0 auto;padding:28px 24px 70px}.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}.eyebrow{color:#9a6a25;text-transform:uppercase;letter-spacing:.08em;font-weight:900;font-size:13px}h1{font-size:clamp(42px,6vw,78px);line-height:.94;margin:16px 0}p{font-size:20px;line-height:1.65;color:var(--muted)}
+    .panel{background:white;border-radius:32px;box-shadow:var(--shadow);overflow:hidden}.panel img{width:100%;height:min(520px,58vw);object-fit:cover;display:block}.content{padding:32px}.meta{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0}.tag{background:#fff1de;color:#8a5d1e;border-radius:999px;padding:8px 13px;font-weight:900}.price{color:var(--pink);font-weight:950;font-size:24px}
+    .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:42px}.card{background:white;border-radius:22px;padding:18px;text-decoration:none;box-shadow:0 12px 30px rgba(75,47,47,.08)}.card strong{display:block;margin-bottom:8px}.foot{padding:28px;text-align:center;color:var(--muted)}
+    @media(max-width:820px){.nav{align-items:flex-start}.hero,.grid{grid-template-columns:1fr}h1{font-size:44px}.panel img{height:340px}.actions .btn{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="logo" href="/"><img src="/assets/favicon.svg" alt="" /><span>Nati Dolços i Festa</span></a>
+    <a class="btn primary" href="${escapeHtmlAttribute(whatsappUrl)}" target="_blank" rel="noopener">WhatsApp</a>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <span class="eyebrow">${escapeHtml(product.categoria || "Celebracions personalitzades")}</span>
+        <h1>${escapeHtml(product.nom)}</h1>
+        <p>${escapeHtml(description)}</p>
+        ${product.opcions ? `<p>${escapeHtml(product.opcions)}</p>` : ""}
+        <div class="meta">
+          <span class="tag">Tortosa</span>
+          <span class="tag">Terres de l'Ebre</span>
+          <span class="tag">Tarragona</span>
+          <span class="price">${price ? `Des de ${escapeHtml(price)} EUR` : "A pressupost"}</span>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="${escapeHtmlAttribute(checkoutUrl)}">Reservar o demanar pressupost</a>
+          <a class="btn secondary" href="${escapeHtmlAttribute(whatsappUrl)}" target="_blank" rel="noopener">Consultar per WhatsApp</a>
+        </div>
+      </div>
+      <article class="panel">
+        ${imageUrl ? `<img src="${escapeHtmlAttribute(imageUrl)}" alt="${escapeHtmlAttribute(decoratedImage?.seoAlt || product.nom)}" />` : ""}
+        <div class="content">
+          <strong>Servei local i personalitzat</strong>
+          <p>Preparem cada proposta segons la data, l'espai, la temàtica, els colors i el tipus de celebració.</p>
+        </div>
+      </article>
+    </section>
+    <section>
+      <h2>Altres idees per a la teua celebració</h2>
+      <div class="grid">
+        ${relatedProducts.map((item) => `<a class="card" href="/producte/${encodeURIComponent(item.slug)}"><strong>${escapeHtml(item.nom)}</strong><span>${escapeHtml(item.categoria || "Nati Dolços i Festa")}</span></a>`).join("")}
+      </div>
+    </section>
+  </main>
+  <footer class="foot">© 2026 Nati Dolços i Festa · Web creada per ONIX - onixdigital.pro</footer>
+</body>
+</html>`;
+}
+
+const galleryCategoryPages = [
+  {
+    slug: "taules-dolces",
+    label: "Taules dolces",
+    title: "Fotos de taules dolces i candy bar a Tortosa i Tarragona",
+    description: "Galeria de taules dolces, candy bar i muntatges per a comunions, bodes, bateigs, aniversaris i celebracions a Tortosa, les Terres de l'Ebre i Tarragona.",
+    aliases: ["taula dolca", "taules dolces", "candy bar", "sweet", "esdeveniments", "comunions", "bodes"]
+  },
+  {
+    slug: "globus-decoracio",
+    label: "Globus i decoració",
+    title: "Decoració amb globus, photocall i ambientació a Tarragona",
+    description: "Idees reals de decoració amb globus, photocalls, baby showers, aniversaris i muntatges visuals per a festes a Tortosa i Tarragona.",
+    aliases: ["globus", "decoracio", "decoració", "photocall", "ambientacio", "ambientació"]
+  },
+  {
+    slug: "pastissos-xuxes",
+    label: "Pastissos de xuxes",
+    title: "Pastissos de xuxes personalitzats a Tortosa",
+    description: "Galeria de pastissos de xuxes personalitzats per a aniversaris, comunions, regals i celebracions especials a les Terres de l'Ebre.",
+    aliases: ["pastis", "pastís", "pastissos", "xuxes", "xuxes personalitzades"]
+  },
+  {
+    slug: "regals-detalls",
+    label: "Regals i detalls",
+    title: "Rams de xuxes, regals originals i detalls personalitzats",
+    description: "Idees de rams de xuxes, regals dolços, sorpreses i detalls personalitzats per regalar a Tortosa i Tarragona.",
+    aliases: ["regals", "detalls", "ram", "sorpreses"]
+  }
+];
+
+function normaliseText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+function matchesGalleryCategory(category, config) {
+  const value = normaliseText(category);
+  return config.aliases.some((alias) => value.includes(normaliseText(alias)));
+}
+
+function flattenGalleryImages(items = [], categoryConfig = null) {
+  return items.flatMap((item) => (item.imatges || []).map((image) => ({
+    item,
+    image,
+    categories: Array.isArray(image.galleryCategories) && image.galleryCategories.length > 0
+      ? image.galleryCategories
+      : classifyGalleryCategories(image.url || image.fullUrl || image.alt, item.categoria || "")
+  }))).filter(({ item, categories }) => {
+    if (!categoryConfig) return true;
+    return matchesGalleryCategory(item.categoria, categoryConfig)
+      || categories.some((category) => matchesGalleryCategory(category, categoryConfig));
+  });
+}
+
+async function getAllImageEntriesForSeo(request) {
+  const siteUrl = buildPublicUrl(request);
+  let products = [];
+  let gallery = [];
+
+  try {
+    products = await fetchProductsFromAirtable();
+  } catch {
+    products = readFallbackProducts();
+  }
+
+  try {
+    gallery = await fetchGalleryFromAirtable();
+  } catch {
+    gallery = [];
+  }
+
+  return flattenGalleryImages([...gallery, ...products]).map((entry, index) => {
+    const categoryLabel = entry.categories?.[0] || entry.item?.categoria || "Galeria";
+    return {
+      ...entry,
+      image: decorateImageForSeo({
+        item: entry.item,
+        image: entry.image,
+        categoryLabel,
+        index: Number.isFinite(Number(entry.image?.index)) ? Number(entry.image.index) : index,
+        siteUrl
+      })
+    };
+  });
+}
+
+async function findStableImageByPath(request, pathname) {
+  const requestedPath = decodeURIComponent(pathname);
+  const entries = await getAllImageEntriesForSeo(request);
+  return entries.find((entry) => entry.image.stablePath === requestedPath) || null;
+}
+
+async function sendStableImage(request, response, pathname) {
+  const entry = await findStableImageByPath(request, pathname);
+  if (!entry) {
+    sendJson(response, 404, { error: "Imatge no trobada." });
+    return;
+  }
+
+  const sourceUrl = entry.image.fullUrl || entry.image.url || "";
+  if (!sourceUrl) {
+    sendJson(response, 404, { error: "Origen de la imatge no trobat." });
+    return;
+  }
+
+  if (!/^https?:\/\//i.test(sourceUrl)) {
+    const filePath = safeJoin(ROOT, "/" + sourceUrl.replace(/^\/+/, ""));
+    if (!filePath || !fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+      sendJson(response, 404, { error: "Asset no trobat." });
+      return;
+    }
+
+    response.writeHead(200, {
+      "Content-Type": getMimeType(filePath),
+      "Cache-Control": "public, max-age=86400"
+    });
+    fs.createReadStream(filePath).pipe(response);
+    return;
+  }
+
+  const imageResponse = await fetch(sourceUrl);
+  if (!imageResponse.ok) {
+    sendJson(response, 502, { error: "No s'ha pogut carregar la imatge original." });
+    return;
+  }
+
+  const contentType = imageResponse.headers.get("content-type") || `image/${getImageExtension(sourceUrl)}`;
+  const buffer = Buffer.from(await imageResponse.arrayBuffer());
+  response.writeHead(200, {
+    "Content-Type": contentType,
+    "Cache-Control": "public, max-age=86400"
+  });
+  response.end(buffer);
+}
+
+async function buildGalleryPageHtml({ categoryConfig, request }) {
+  const siteUrl = buildPublicUrl(request);
+  const pageUrl = `${siteUrl}/galeria/${categoryConfig.slug}`;
+  let products = [];
+  let gallery = [];
+
+  try {
+    products = await fetchProductsFromAirtable();
+  } catch {
+    products = readFallbackProducts();
+  }
+
+  try {
+    gallery = await fetchGalleryFromAirtable();
+  } catch {
+    gallery = [];
+  }
+
+  const images = flattenGalleryImages([...gallery, ...products], categoryConfig)
+    .map((entry, index) => ({
+      ...entry,
+      image: decorateImageForSeo({
+        item: entry.item,
+        image: entry.image,
+        categoryLabel: categoryConfig.label,
+        index: Number.isFinite(Number(entry.image?.index)) ? Number(entry.image.index) : index,
+        siteUrl
+      })
+    }));
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    name: categoryConfig.title,
+    description: categoryConfig.description,
+    url: pageUrl,
+    about: categoryConfig.label,
+    image: images.slice(0, 24).map(({ image }) => image.stableUrl)
+  };
+
+  return `<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(categoryConfig.title)} | Nati Dolços i Festa</title>
+  <meta name="description" content="${escapeHtmlAttribute(categoryConfig.description)}" />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <link rel="canonical" href="${escapeHtmlAttribute(pageUrl)}" />
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="${escapeHtmlAttribute(categoryConfig.title)}" />
+  <meta property="og:description" content="${escapeHtmlAttribute(categoryConfig.description)}" />
+  <meta property="og:url" content="${escapeHtmlAttribute(pageUrl)}" />
+  <meta name="google-site-verification" content="${escapeHtmlAttribute(process.env.GOOGLE_SITE_VERIFICATION || "")}" />
+  <script type="application/ld+json">${JSON.stringify(structuredData).replace(/</g, "\\u003c")}</script>
+  <style>
+    :root{--pink:#e95b83;--cream:#fff7ef;--choco:#4b2f2f;--muted:#7a6767;--shadow:0 18px 45px rgba(75,47,47,.12)}
+    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--cream);color:var(--choco)}a{color:inherit}.nav,main{max-width:1180px;margin:0 auto;padding:24px}.nav{display:flex;align-items:center;justify-content:space-between}.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:900;font-size:24px}.logo img{width:46px;height:46px;border-radius:14px}.btn{display:inline-flex;border-radius:999px;background:var(--pink);color:#fff;text-decoration:none;font-weight:900;padding:14px 22px}
+    h1{font-size:clamp(42px,6vw,76px);line-height:.96;margin:28px 0 14px}p{font-size:20px;line-height:1.65;color:var(--muted);max-width:850px}.filters{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0}.pill{padding:10px 14px;border-radius:999px;background:#fff;text-decoration:none;font-weight:800;box-shadow:0 8px 22px rgba(75,47,47,.08)}.pill.active{background:var(--choco);color:#fff}
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}.photo{background:#fff;border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}.photo img{width:100%;height:320px;object-fit:cover;display:block}.caption{padding:18px}.caption strong{display:block;font-size:18px}.caption span{color:var(--muted)}
+    .empty{background:#fff;border-radius:24px;padding:30px}.foot{text-align:center;padding:30px;color:var(--muted)}
+    @media(max-width:820px){.nav{align-items:flex-start}.gallery{grid-template-columns:1fr}.photo img{height:300px}h1{font-size:42px}}
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="logo" href="/"><img src="/assets/favicon.svg" alt="" /><span>Nati Dolços i Festa</span></a>
+    <a class="btn" href="/#contacte">Demanar pressupost</a>
+  </header>
+  <main>
+    <span>${escapeHtml(categoryConfig.label)} · Tortosa · Terres de l'Ebre · Tarragona</span>
+    <h1>${escapeHtml(categoryConfig.title)}</h1>
+    <p>${escapeHtml(categoryConfig.description)}</p>
+    <nav class="filters" aria-label="Categories de galeria">
+      ${galleryCategoryPages.map((item) => `<a class="pill ${item.slug === categoryConfig.slug ? "active" : ""}" href="/galeria/${item.slug}">${escapeHtml(item.label)}</a>`).join("")}
+    </nav>
+    ${images.length > 0 ? `<section class="gallery">${images.map(({ item, image }, index) => {
+      const imageUrl = image.stableUrl;
+      const alt = image.seoAlt || `${categoryConfig.label} de Nati Dolços i Festa a Tortosa`;
+      return `<article class="photo">
+        <a href="${escapeHtmlAttribute(imageUrl)}" target="_blank" rel="noopener">
+          <img src="${escapeHtmlAttribute(imageUrl)}" alt="${escapeHtmlAttribute(alt)}" loading="${index < 4 ? "eager" : "lazy"}" />
+        </a>
+        <div class="caption"><strong>${escapeHtml(item.nom || categoryConfig.label)}</strong><span>${escapeHtml(item.categoria || categoryConfig.label)}</span></div>
+      </article>`;
+    }).join("")}</section>` : `<div class="empty">Aquesta galeria s'està actualitzant. Torna prompte per veure noves imatges.</div>`}
+  </main>
+  <footer class="foot">© 2026 Nati Dolços i Festa · Web creada per ONIX - onixdigital.pro</footer>
+</body>
+</html>`;
 }
 
 function sendText(response, statusCode, text, contentType = "text/plain; charset=utf-8") {
@@ -339,6 +785,7 @@ async function fetchProductsFromAirtable() {
         ? fieldsRecord["Imatges"].map((image, index) => ({
             url: image.thumbnails?.large?.url || image.url || "",
             fullUrl: image.url || "",
+            filename: image.filename || "",
             alt: image.filename || fieldsRecord["Nom"] || "Imatge del producte",
             galleryCategories: classifyGalleryCategories(image.filename || image.url || "", fieldsRecord["Categoria"]?.name || fieldsRecord["Categoria"] || ""),
             index
@@ -349,6 +796,7 @@ async function fetchProductsFromAirtable() {
         ? assetEntry.images.map((image, index) => ({
             url: image.path,
             fullUrl: image.path,
+            filename: image.filename || image.path || "",
             alt: image.alt || fieldsRecord["Nom"] || "Imatge del producte",
             galleryCategories: image.galleryCategories || classifyGalleryCategories(image.path || image.url || image.alt, fieldsRecord["Categoria"]?.name || fieldsRecord["Categoria"] || ""),
             index
@@ -418,6 +866,7 @@ async function fetchGalleryFromAirtable() {
           ? attachments.map((image, index) => ({
               url: image.thumbnails?.large?.url || image.url || "",
               fullUrl: image.url || "",
+              filename: image.filename || "",
               alt: image.filename || title || "Imatge de galeria",
               galleryCategories: [category],
               index
@@ -595,7 +1044,7 @@ function serveStaticAsset(requestUrl, response) {
   return true;
 }
 
-const server = http.createServer(async (request, response) => {
+const server = http.createServer({ maxHeaderSize: MAX_HEADER_SIZE }, async (request, response) => {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
 
   if (request.method === "OPTIONS") {
@@ -613,6 +1062,11 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  if (request.method === "GET" && requestUrl.pathname.startsWith("/imatges/")) {
+    await sendStableImage(request, response, requestUrl.pathname);
+    return;
+  }
+
   if (request.method === "GET" && requestUrl.pathname === "/robots.txt") {
     const siteUrl = buildPublicUrl(request);
     sendText(response, 200, [
@@ -626,18 +1080,63 @@ const server = http.createServer(async (request, response) => {
 
   if (request.method === "GET" && requestUrl.pathname === "/sitemap.xml") {
     const siteUrl = buildPublicUrl(request);
+    const lastmod = new Date().toISOString().slice(0, 10);
+    let products = [];
+    let imageEntries = [];
+    let productRoutes = [];
+
+    try {
+      products = await fetchProductsFromAirtable();
+      productRoutes = products.map((product) => ({
+        path: `/producte/${encodeURIComponent(product.slug)}`,
+        priority: "0.8",
+        changefreq: "weekly",
+        images: (product.imatges || []).slice(0, 3).map((image, index) => decorateImageForSeo({
+          item: product,
+          image,
+          categoryLabel: product.categoria || "Producte",
+          index,
+          siteUrl
+        }))
+      }));
+    } catch {
+      productRoutes = [];
+    }
+
+    try {
+      imageEntries = await getAllImageEntriesForSeo(request);
+    } catch {
+      imageEntries = [];
+    }
+
     const routes = [
       { path: "/", priority: "1.0", changefreq: "weekly" },
-      { path: "/checkout", priority: "0.4", changefreq: "monthly" }
+      ...galleryCategoryPages.map((category) => ({
+        path: `/galeria/${category.slug}`,
+        priority: "0.75",
+        changefreq: "weekly",
+        images: imageEntries
+          .filter((entry) => matchesGalleryCategory(entry.item?.categoria, category) || entry.categories.some((itemCategory) => matchesGalleryCategory(itemCategory, category)))
+          .slice(0, 30)
+          .map((entry) => entry.image)
+      })),
+      ...productRoutes
     ];
     sendText(response, 200, [
       '<?xml version="1.0" encoding="UTF-8"?>',
-      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
       ...routes.flatMap((route) => [
         "  <url>",
-        `    <loc>${siteUrl}${route.path}</loc>`,
+        `    <loc>${escapeHtml(siteUrl + route.path)}</loc>`,
+        `    <lastmod>${lastmod}</lastmod>`,
         `    <changefreq>${route.changefreq}</changefreq>`,
         `    <priority>${route.priority}</priority>`,
+        ...(route.images || []).flatMap((image) => [
+          "    <image:image>",
+          `      <image:loc>${escapeHtml(image.stableUrl)}</image:loc>`,
+          `      <image:title>${escapeHtml(image.seoAlt || "Nati Dolços i Festa")}</image:title>`,
+          "    </image:image>"
+        ]),
         "  </url>"
       ]),
       "</urlset>",
@@ -664,6 +1163,10 @@ const server = http.createServer(async (request, response) => {
       "URLs importants:",
       `- Web principal: ${siteUrl}/`,
       `- Sitemap: ${siteUrl}/sitemap.xml`,
+      `- Galeria de taules dolces: ${siteUrl}/galeria/taules-dolces`,
+      `- Galeria de globus i decoració: ${siteUrl}/galeria/globus-decoracio`,
+      `- Galeria de pastissos de xuxes: ${siteUrl}/galeria/pastissos-xuxes`,
+      `- Galeria de regals i detalls: ${siteUrl}/galeria/regals-detalls`,
       `- Catàleg i configuració pública: ${siteUrl}/api/config`,
       `- Galeria visual: ${siteUrl}/#galeria`,
       `- Contacte i pressupostos: ${siteUrl}/#contacte`,
@@ -674,9 +1177,36 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  if (request.method === "GET" && requestUrl.pathname.startsWith("/producte/")) {
+    const slug = decodeURIComponent(requestUrl.pathname.replace(/^\/producte\//, "").replace(/\/$/, ""));
+    const products = await fetchProductsFromAirtable();
+    const product = products.find((item) => item.slug === slug || item.id === slug);
+
+    if (!product) {
+      sendJson(response, 404, { error: "Producte no trobat." });
+      return;
+    }
+
+    sendHtml(response, 200, buildProductPageHtml({ product, products, request }));
+    return;
+  }
+
+  if (request.method === "GET" && requestUrl.pathname.startsWith("/galeria/")) {
+    const slug = decodeURIComponent(requestUrl.pathname.replace(/^\/galeria\//, "").replace(/\/$/, ""));
+    const categoryConfig = galleryCategoryPages.find((item) => item.slug === slug);
+
+    if (!categoryConfig) {
+      sendJson(response, 404, { error: "Galeria no trobada." });
+      return;
+    }
+
+    sendHtml(response, 200, await buildGalleryPageHtml({ categoryConfig, request }));
+    return;
+  }
+
   if (request.method === "GET" && (requestUrl.pathname === "/" || requestUrl.pathname === "/checkout")) {
     const html = fs.readFileSync(INDEX_PATH, "utf8");
-    sendHtml(response, 200, html);
+    sendHtml(response, 200, buildPageHtml(html, request, requestUrl.pathname));
     return;
   }
 

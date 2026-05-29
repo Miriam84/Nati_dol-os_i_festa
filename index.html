@@ -401,6 +401,8 @@
     }
 
     .service-card h3, .product-card h3, .step h3 { margin: 0 0 8px; color: var(--choco); }
+    .product-card h3 a { color: inherit; text-decoration: none; }
+    .product-card h3 a:hover { color: var(--pink-dark); }
     .service-card p, .product-card p, .step p, .faq-item p { color: var(--muted); margin: 0; }
 
     .products {
@@ -1334,19 +1336,19 @@
           <span class="celebration-tag">Comunions</span>
           <h3>Taules dolces i decoració que llueixen de debò</h3>
           <p>Combinem dolç, globus i detalls perquè la celebració es vegi cuidada i molt especial.</p>
-          <a class="celebration-link js-celebration-link" href="#contacte" data-event="Comunió">Veure proposta</a>
+          <a class="celebration-link js-celebration-link" href="/galeria/taules-dolces" data-event="Comunió">Veure més propostes</a>
         </article>
         <article class="celebration-card" id="celebration-bodas" style="background-image:linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)), url('assets/products/regals-originals-i-detalls-02.jpg')">
           <span class="celebration-tag">Bodes i events</span>
           <h3>Racons dolços, photocalls i detalls que enamoren</h3>
           <p>Propostes elegants i visuals per vestir el dia amb una imatge coherent i memorable.</p>
-          <a class="celebration-link js-celebration-link" href="#contacte" data-event="Boda">Veure proposta</a>
+          <a class="celebration-link js-celebration-link" href="/galeria/taules-dolces" data-event="Boda">Veure més propostes</a>
         </article>
         <article class="celebration-card" id="celebration-birthdays" style="background-image:linear-gradient(180deg, rgba(75,47,47,0.08), rgba(75,47,47,0.72)), url('assets/products/globus-d-heli-personalitzats-02.jpg')">
           <span class="celebration-tag">Aniversaris</span>
           <h3>15, 18 anys, baby shower i festes amb molta presència</h3>
           <p>Globus, xuxes i muntatges pensats per sorprendre i convertir qualsevol espai en una festa.</p>
-          <a class="celebration-link js-celebration-link" href="#contacte" data-event="Aniversari">Demana idees</a>
+          <a class="celebration-link js-celebration-link" href="/galeria/globus-decoracio" data-event="Aniversari">Veure més propostes</a>
         </article>
       </div>
     </section>
@@ -1390,7 +1392,7 @@
           <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/taula-dolca-candy-bar-01.webp')" role="img" aria-label="Taula dolça personalitzada"></div></div>
           <div class="product-content">
             <span class="tag">Comunions, bodes i celebracions</span>
-            <h3>Taula dolça personalitzada</h3>
+            <h3><a href="/galeria/taules-dolces">Taula dolça personalitzada</a></h3>
             <p>Per a comunions, bodes, bateigs, aniversaris i festes especials. Inclou proposta visual segons temàtica i nombre de convidats.</p>
             <p>Ens adaptem a l’espai, l’estil i el tipus de celebració perquè el resultat es vegi cuidat i especial.</p>
             <div class="product-meta">
@@ -1404,7 +1406,7 @@
           <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/pastis-de-xuxes-personalitzat-01.jpg')" role="img" aria-label="Pastís de xuxes personalitzat"></div></div>
           <div class="product-content">
             <span class="tag">Detalls dolços personalitzats</span>
-            <h3>Pastís de xuxes</h3>
+            <h3><a href="/galeria/pastissos-xuxes">Pastís de xuxes</a></h3>
             <p>Pastís dolç fet a mida per aniversaris, comunions o regals. Tria mida, colors i estil.</p>
             <p>Una idea fàcil de regalar i molt visual, preparada segons l’edat, la temàtica o el moment especial.</p>
             <div class="product-meta">
@@ -1416,45 +1418,53 @@
 
         <article class="product-card">
           <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/ram-de-xuxes-01.jpg')" role="img" aria-label="Ram de xuxes"></div></div>
-          <span class="tag">Regal fàcil</span>
-          <h3>Ram de xuxes</h3>
-          <p>Un detall original, vistos i dolc per regalar a qualsevol edat.</p>
-          <div class="product-meta">
-            <span class="price">Des de 18 EUR</span>
-            <button class="btn btn-primary js-static-product" type="button" data-product="Ram de xuxes">Comprar</button>
+          <div class="product-content">
+            <span class="tag">Regal fàcil</span>
+            <h3><a href="/galeria/regals-detalls">Ram de xuxes</a></h3>
+            <p>Un detall original, vistós i dolç per regalar a qualsevol edat.</p>
+            <div class="product-meta">
+              <span class="price">Des de 18 EUR</span>
+              <button class="btn btn-primary js-static-product" type="button" data-product="Ram de xuxes">Comprar</button>
+            </div>
           </div>
         </article>
 
         <article class="product-card">
           <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/globus-d-heli-personalitzats-01.jpg')" role="img" aria-label="Decoració amb globus"></div></div>
-          <span class="tag">Fotos boniques</span>
-          <h3>Decoració amb globus</h3>
-          <p>Decoració per a sales, photocall, aniversaris, 18 anys, festa dels 15 i baby showers.</p>
-          <div class="product-meta">
-            <span class="price">A pressupost</span>
-            <button class="btn btn-primary js-static-product" type="button" data-product="Decoració amb globus">Consultar</button>
+          <div class="product-content">
+            <span class="tag">Fotos boniques</span>
+            <h3><a href="/galeria/globus-decoracio">Decoració amb globus</a></h3>
+            <p>Decoració per a sales, photocall, aniversaris, 18 anys, festa dels 15 i baby showers.</p>
+            <div class="product-meta">
+              <span class="price">A pressupost</span>
+              <button class="btn btn-primary js-static-product" type="button" data-product="Decoració amb globus">Consultar</button>
+            </div>
           </div>
         </article>
 
         <article class="product-card">
           <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/taula-dolca-candy-bar-04.jpg')" role="img" aria-label="Baby shower i celebracions"></div></div>
-          <span class="tag">Celebracions</span>
-          <h3>Baby shower</h3>
-          <p>Taula dolca, globus i detalls decoratius per donar un toc tendre i especial a la festa.</p>
-          <div class="product-meta">
-            <span class="price">A pressupost</span>
-            <button class="btn btn-primary js-static-product" type="button" data-product="Baby shower">Consultar</button>
+          <div class="product-content">
+            <span class="tag">Celebracions</span>
+            <h3><a href="/galeria/globus-decoracio">Baby shower</a></h3>
+            <p>Taula dolça, globus i detalls decoratius per donar un toc tendre i especial a la festa.</p>
+            <div class="product-meta">
+              <span class="price">A pressupost</span>
+              <button class="btn btn-primary js-static-product" type="button" data-product="Baby shower">Consultar</button>
+            </div>
           </div>
         </article>
 
         <article class="product-card">
           <div class="product-image"><div class="media-bg" style="--media-url:url('assets/products/regals-originals-i-detalls-01.webp')" role="img" aria-label="Comanda personalitzada"></div></div>
-          <span class="tag">A mida</span>
-          <h3>Comanda personalitzada</h3>
-          <p>Tens una idea concreta? Explica'ns que vols i et direm la millor manera de fer-ho.</p>
-          <div class="product-meta">
-            <span class="price">Personalitzat</span>
-            <button class="btn btn-primary js-static-product" type="button" data-product="Comanda personalitzada">Explicar idea</button>
+          <div class="product-content">
+            <span class="tag">A mida</span>
+            <h3><a href="/galeria/regals-detalls">Comanda personalitzada</a></h3>
+            <p>Tens una idea concreta? Explica'ns què vols i et direm la millor manera de fer-ho.</p>
+            <div class="product-meta">
+              <span class="price">Personalitzat</span>
+              <button class="btn btn-primary js-static-product" type="button" data-product="Comanda personalitzada">Explicar idea</button>
+            </div>
           </div>
         </article>
       </div>
@@ -2748,6 +2758,7 @@
           const price = product.preuOrientatiu ? `Des de ${product.preuOrientatiu} EUR` : "A pressupost";
           const tag = getCategoryMarketingLabel(product.categoria);
           const title = product.nom || "Servei";
+          const productUrl = `/producte/${encodeURIComponent(product.slug || product.id)}`;
           const description = product.descripcioCurta || "Opció personalitzable per a la teua celebració.";
           const image = product.imatges?.[0];
           const reserveLabel = config.checkoutEnabled && product.preuOrientatiu ? "Comprar ara" : buildReserveLabel(product);
@@ -2762,7 +2773,7 @@
               </div>
               <div class="product-content">
                 <span class="tag">${escapeHtml(tag)}</span>
-                <h3>${escapeHtml(title)}</h3>
+                <h3><a href="${escapeHtml(productUrl)}">${escapeHtml(title)}</a></h3>
                 <p>${escapeHtml(description)}</p>
                 <p>${escapeHtml(supportCopy)}</p>
                 <div class="product-meta">
@@ -2865,12 +2876,11 @@
     }
 
     document.querySelectorAll(".js-celebration-link").forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
+      link.addEventListener("click", () => {
         trackEvent("celebration_cta_click", {
-          event_type: link.dataset.event || ""
+          event_type: link.dataset.event || "",
+          target_url: link.href || ""
         });
-        prefillEventForm(link.dataset.event || "");
       });
     });
 
